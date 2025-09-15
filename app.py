@@ -174,7 +174,7 @@ with col2:
         """,
         unsafe_allow_html=True
     )
-
+st.image("assets/logo.png", use_container_width=True)
 # App title and your name
 st.title("📈 Positive EV Betting Finder (MVP)")
 st.caption("Built by Armen Chapman | TruLine Betting")
