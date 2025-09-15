@@ -21,20 +21,29 @@ if "authenticated" not in st.session_state or not st.session_state["authenticate
     login()
     st.stop()
     # ==== MAIN APP ====
-st.title("Positive EV Betting Finder")
+# Run login if not already authenticated
+if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
+    login()
+    st.stop()
 
-# Sidebar filters (with unique keys)
-min_edge = st.sidebar.slider("Min Edge (EV%)", 0.0, 0.10, 0.02, 0.01, key="min_edge")
-bankroll = st.sidebar.number_input("Bankroll ($)", value=1000.0, key="bankroll")
-kelly_fraction = st.sidebar.slider("Kelly Cap (fraction of full Kelly)", 0.0, 1.0, 0.25, 0.05, key="kelly_fraction")
+# === MAIN APP ===
+if st.session_state.get("authenticated", False):
+    st.title("Positive EV Betting Finder")
 
-# Sportsbooks to include
-books = st.sidebar.multiselect(
-    "Books to include",
-    ["DraftKings", "FanDuel", "BetMGM", "PointsBet"],
-    default=["DraftKings", "FanDuel", "BetMGM", "PointsBet"],
-    key="books"
-)
+    # Sidebar filters (with unique keys)
+    min_edge = st.sidebar.slider("Min Edge (EV%)", 0.0, 0.10, 0.02, 0.01, key="min_edge")
+    bankroll = st.sidebar.number_input("Bankroll ($)", value=1000.0, key="bankroll")
+    kelly_fraction = st.sidebar.slider("Kelly Cap (fraction of full Kelly)", 0.0, 1.0, 0.25, 0.05, key="kelly_fraction")
+
+    # Sportsbooks to include
+    books = st.sidebar.multiselect(
+        "Books to include",
+        ["DraftKings", "FanDuel", "BetMGM", "PointsBet"],
+        default=["DraftKings", "FanDuel", "BetMGM", "PointsBet"],
+        key="books"
+    )
+
+    # (Later: add your betting logic + tables here)
 
 # Example odds table (placeholder data)
 import pandas as pd
