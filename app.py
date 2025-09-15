@@ -49,8 +49,7 @@ books = st.sidebar.multiselect(
 # Example odds table (placeholder data until you connect an API)
 
 
-# Option to download the table
-csv = df.to_csv(index=False).encode("utf-8")
+
 
 import os, io, time, json, math
 from datetime import datetime, timezone
