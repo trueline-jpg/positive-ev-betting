@@ -87,7 +87,6 @@ st.markdown(
 )
 
 st.set_page_config(
-   
     page_title="TruLine Betting",
     page_icon="📈",   # placeholder, will swap for your logo later
     layout="wide"
