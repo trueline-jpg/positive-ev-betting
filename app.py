@@ -71,7 +71,7 @@ st.set_page_config(
 
 # App title and your name
 st.title("📈 Positive EV Betting Finder (MVP)")
-st.caption("Created by Armen Chapman")
+st.caption("Built by Armen Chapman | TruLine Betting")
 
 # Sidebar config
 provider_name = os.getenv("PROVIDER", "csv")
@@ -114,7 +114,7 @@ with st.sidebar.expander("🔍 Advanced Filters"):
 # 🔑 Sportsbook API Connections
 st.sidebar.header("🔗 Sportsbook Connections")
 
-with st.sidebar.expander("Connect Sportsbooks"):
+with st.sidebar.expander("⚡ Connect Sportsbooks", expanded=False):
     dk_api = st.text_input("DraftKings API Key", type="password")
     fd_api = st.text_input("FanDuel API Key", type="password")
     mgm_api = st.text_input("BetMGM API Key", type="password")
