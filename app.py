@@ -95,37 +95,44 @@ st.set_page_config(
 col1, col2 = st.columns([1, 8])  # logo in small column, rest empty
 with col1:
     st.image("assets/logo.png", width=80)  # make logo smaller
+st.markdown(
+    """
+    <style>
+    /* Global App Background */
+    .stApp {
+        background-color: #0f0f0f;  /* matte black background */
+        color: #ffffff;  /* white text */
+        font-family: 'Helvetica Neue', sans-serif;
+    }
 
-        /* Global App Background */
-        .stApp {
-            background-color: #0f0f0f;  /* matte black background */
-            color: #ffffff;             /* white text */
-            font-family: 'Helvetica Neue', sans-serif;
-        }
+    /* Sidebar Styling */
+    section[data-testid="stSidebar"] {
+        background-color: #1a1a1a;  /* dark grey sidebar */
+        color: #ffffff;
+        border-right: 1px solid #333;
+    }
 
-        /* Sidebar Styling */
-        section[data-testid="stSidebar"] {
-            background-color: #1a1a1a;  /* dark grey sidebar */
-            color: #ffffff;
-            border-right: 1px solid #333;
-        }
+    /* Titles */
+    h1, h2, h3, h4 {
+        color: #ffffff;
+        font-weight: 600;
+    }
 
-        /* Titles */
-        h1, h2, h3, h4 {
-            color: #ffffff;
-            font-weight: 600;
-        }
+    /* Dataframe/Table Styling */
+    .dataframe th {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        text-align: center;
+    }
+    .dataframe td {
+        color: #d1d1d1 !important;
+        background-color: #121212 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-        /* Dataframe/Table Styling */
-        .dataframe th {
-            background-color: #1a1a1a !important;
-            color: #ffffff !important;
-            text-align: center;
-        }
-        .dataframe td {
-            color: #d1d1d1 !important;
-            background-color: #121212 !important;
-        }
 
         /* Buttons */
         button[kind="primary"] {
