@@ -1,3 +1,24 @@
+import streamlit as st
+
+# --- LOGIN SYSTEM ---
+def login():
+    st.sidebar.title("Login")
+    username = st.sidebar.text_input("Username")
+    password = st.sidebar.text_input("Password", type="password")
+
+    # Load from Streamlit secrets
+    if username in st.secrets["users"] and st.secrets["users"][username] == password:
+        st.session_state["authenticated"] = True
+        st.session_state["user"] = username
+        st.sidebar.success(f"Welcome, {username}!")
+    else:
+        if username and password:
+            st.sidebar.error("Invalid username or password")
+
+# Run login if not already authenticated
+if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
+    login()
+    st.stop()
 from __future__ import annotations
 import os, io, time, json, math
 from datetime import datetime, timezone
