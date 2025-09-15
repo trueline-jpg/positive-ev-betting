@@ -20,7 +20,6 @@ def login():
 if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
     login()
     st.stop()
-from __future__ import annotations
 import os, io, time, json, math
 from datetime import datetime, timezone
 import pandas as pd
