@@ -23,16 +23,17 @@ if "authenticated" not in st.session_state or not st.session_state["authenticate
     # ==== MAIN APP ====
 st.title("Positive EV Betting Finder")
 
-# Sidebar filters
-min_edge = st.sidebar.slider("Min Edge (EV%)", 0.0, 0.10, 0.02, 0.01)
-bankroll = st.sidebar.number_input("Bankroll ($)", value=1000.0)
-kelly_fraction = st.sidebar.slider("Kelly Cap (fraction of full Kelly)", 0.0, 1.0, 0.25, 0.05)
+# Sidebar filters (with unique keys)
+min_edge = st.sidebar.slider("Min Edge (EV%)", 0.0, 0.10, 0.02, 0.01, key="min_edge")
+bankroll = st.sidebar.number_input("Bankroll ($)", value=1000.0, key="bankroll")
+kelly_fraction = st.sidebar.slider("Kelly Cap (fraction of full Kelly)", 0.0, 1.0, 0.25, 0.05, key="kelly_fraction")
 
 # Sportsbooks to include
 books = st.sidebar.multiselect(
     "Books to include",
     ["DraftKings", "FanDuel", "BetMGM", "PointsBet"],
-    default=["DraftKings", "FanDuel", "BetMGM", "PointsBet"]
+    default=["DraftKings", "FanDuel", "BetMGM", "PointsBet"],
+    key="books"
 )
 
 # Example odds table (placeholder data)
