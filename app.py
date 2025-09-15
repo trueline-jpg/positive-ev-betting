@@ -20,6 +20,43 @@ def login():
 if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
     login()
     st.stop()
+    # ==== MAIN APP ====
+st.title("Positive EV Betting Finder")
+
+# Sidebar filters
+min_edge = st.sidebar.slider("Min Edge (EV%)", 0.0, 0.10, 0.02, 0.01)
+bankroll = st.sidebar.number_input("Bankroll ($)", value=1000.0)
+kelly_fraction = st.sidebar.slider("Kelly Cap (fraction of full Kelly)", 0.0, 1.0, 0.25, 0.05)
+
+# Sportsbooks to include
+books = st.sidebar.multiselect(
+    "Books to include",
+    ["DraftKings", "FanDuel", "BetMGM", "PointsBet"],
+    default=["DraftKings", "FanDuel", "BetMGM", "PointsBet"]
+)
+
+# Example odds table (placeholder data until you connect an API)
+import pandas as pd
+data = {
+    "sport": ["basketball_nba", "soccer_epl", "football_nfl"],
+    "home": ["Celtics", "Arsenal", "Cowboys"],
+    "away": ["Heat", "Newcastle", "Eagles"],
+    "edge_pct": [0.034, 0.025, 0.041],
+    "book": ["DraftKings", "FanDuel", "BetMGM"]
+}
+df = pd.DataFrame(data)
+
+st.subheader("Opportunities")
+st.dataframe(df)
+
+# Option to download the table
+csv = df.to_csv(index=False).encode("utf-8")
+st.download_button(
+    label="Download opportunities (CSV)",
+    data=csv,
+    file_name="opportunities.csv",
+    mime="text/csv",
+)
 import os, io, time, json, math
 from datetime import datetime, timezone
 import pandas as pd
