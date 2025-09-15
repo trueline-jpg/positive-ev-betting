@@ -88,14 +88,23 @@ st.markdown(
 
 st.set_page_config(
     page_title="TruLine Betting",
-    page_icon="📈",   # placeholder, will swap for your logo later
     layout="wide"
 )
 # Display logo
-st.image("assets/logo.png", use_container_width=True)
+# Display logo in top-left, smaller size
+col1, col2 = st.columns([1, 8])  # logo in small column, rest empty
+with col1:
+    st.image("assets/logo.png", width=80)  # make logo smaller
 st.markdown(
     """
     <style>
+    img {
+        filter: invert(1);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
         /* Global App Background */
         .stApp {
             background-color: #0f0f0f;  /* matte black background */
@@ -164,7 +173,7 @@ st.markdown(
 # Header with logo + branding
 col1, col2 = st.columns([0.2, 0.8])
 with col1:
-    st.image("assets/logo.png", use_column_width=True)  # add your logo to /assets/
+    
 with col2:
     st.markdown(
         """
@@ -173,7 +182,7 @@ with col2:
         """,
         unsafe_allow_html=True
     )
-st.image("assets/logo.png", use_container_width=True)
+
 # App title and your name
 st.title("📈 Positive EV Betting Finder (MVP)")
 st.caption("Built by Armen Chapman | TruLine Betting")
