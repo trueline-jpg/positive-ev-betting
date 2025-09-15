@@ -1,0 +1,10 @@
+sport_key,commence_time,home_team,away_team,book,market,side,price_american,opp_price_american,ref_price_american
+americanfootball_nfl,2025-09-14T20:20:00Z,Dallas Cowboys,Philadelphia Eagles,DraftKings,h2h,home,-110,-110,-120
+americanfootball_nfl,2025-09-14T20:20:00Z,Dallas Cowboys,Philadelphia Eagles,FanDuel,h2h,home,-108,-112,-120
+americanfootball_nfl,2025-09-14T20:20:00Z,Dallas Cowboys,Philadelphia Eagles,BetMGM,h2h,away,-105,-115,-120
+basketball_nba,2025-10-20T00:00:00Z,Boston Celtics,Miami Heat,DraftKings,h2h,home,-135,+115,-145
+basketball_nba,2025-10-20T00:00:00Z,Boston Celtics,Miami Heat,FanDuel,h2h,home,-130,+110,-145
+basketball_nba,2025-10-20T00:00:00Z,Boston Celtics,Miami Heat,BetMGM,h2h,away,+120,-140,-145
+soccer_epl,2025-09-21T15:30:00Z,Arsenal,Newcastle United,DraftKings,3way,home,+110,opp:+230,ref_home:+100
+soccer_epl,2025-09-21T15:30:00Z,Arsenal,Newcastle United,FanDuel,3way,draw,+240,opp:+220,ref_draw:+230
+soccer_epl,2025-09-21T15:30:00Z,Arsenal,Newcastle United,BetMGM,3way,away,+260,opp:+110,ref_away:+250
