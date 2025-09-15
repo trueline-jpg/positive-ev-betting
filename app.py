@@ -62,26 +62,76 @@ from ev_utils import (
 load_dotenv()
 
 st.set_page_config(page_title="Positive EV Finder", layout="wide")
-st.title("🔎 Positive EV Betting Finder (MVP)")
+# Page configuration (already have, just update)
+st.set_page_config(
+    page_title="Trueline Betting",
+    page_icon="📊",
+    layout="wide"
+)
+
+# App title and your name
+st.title("📈 Positive EV Betting Finder (MVP)")
+st.caption("Created by Armen Chapman")
 
 # Sidebar config
 provider_name = os.getenv("PROVIDER", "csv")
 regions = os.getenv("REGIONS", "us")
 markets_env = os.getenv("MARKETS", "h2h,spreads,totals")
-default_books = [b.strip() for b in os.getenv("BOOKS", "DraftKings,FanDuel,BetMGM,PointsBet,Pinnacle").split(",") if b.strip()]
+default_books = [b.strip() for b in os.getenv(
+    "BOOKS",
+    "DraftKings,FanDuel,BetMGM,PointsBet,Caesars,Barstool,BetRivers,Unibet,Bet365,Pinnacle,BetUS,Fanatics,Underdog,Prizepicks,Fliff"
+).split(",") if b.strip()]
 ref_book = os.getenv("REF_BOOK", "Pinnacle")
 fallback_margin = float(os.getenv("REF_FALLBACK_MARGIN", "0.03"))
 kelly_cap = float(os.getenv("KELLY_FRACTION", "0.25"))
 min_edge_default = float(os.getenv("MIN_EDGE", "0.02"))
 refresh_seconds = int(os.getenv("REFRESH_SECONDS", "60"))
 
-st.sidebar.header("Settings")
-min_edge = st.sidebar.slider("Min Edge (EV%)", 0.0, 0.10, min_edge_default, 0.005, format="%.3f")
-stake_bankroll = st.sidebar.number_input("Bankroll ($)", min_value=10.0, value=1000.0, step=50.0)
-kelly_cap = st.sidebar.slider("Kelly Cap (fraction of full Kelly)", 0.0, 1.0, kelly_cap, 0.05)
-selected_books = st.sidebar.multiselect("Books to include", default_books, default=default_books)
-sports_filter = st.sidebar.text_input("Sport keys include (comma-separated, blank = all)", value="")
+# Sidebar UI with sections
+st.sidebar.header("⚙️ Settings")
+min_edge = st.sidebar.slider(
+    "Min Edge (EV%)", 
+    0.0, 0.10, min_edge_default, 0.005, format="%.3f"
+)
+stake_bankroll = st.sidebar.number_input(
+    "Bankroll ($)", min_value=10.0, value=1000.0, step=50.0
+)
+kelly_cap = st.sidebar.slider(
+    "Kelly Cap (fraction of full Kelly)", 
+    0.0, 1.0, kelly_cap, 0.05
+)
 
+st.sidebar.header("📚 Sportsbooks")
+selected_books = st.sidebar.multiselect(
+    "Books to include", 
+    default_books, 
+    default=default_books
+)
+
+with st.sidebar.expander("🔍 Advanced Filters"):
+    sports_filter = st.text_input("Sport keys include (comma-separated, blank = all)", value="")
+    refresh_seconds = st.number_input("Refresh every (seconds)", min_value=10, value=60)
+# 🔑 Sportsbook API Connections
+st.sidebar.header("🔗 Sportsbook Connections")
+
+with st.sidebar.expander("Connect Sportsbooks"):
+    dk_api = st.text_input("DraftKings API Key", type="password")
+    fd_api = st.text_input("FanDuel API Key", type="password")
+    mgm_api = st.text_input("BetMGM API Key", type="password")
+    pb_api = st.text_input("PointsBet API Key", type="password")
+    caesars_api = st.text_input("Caesars API Key", type="password")
+    br_api = st.text_input("Barstool API Key", type="password")
+    brivers_api = st.text_input("BetRivers API Key", type="password")
+    unibet_api = st.text_input("Unibet API Key", type="password")
+    bet365_api = st.text_input("Bet365 API Key", type="password")
+    pinn_api = st.text_input("Pinnacle API Key", type="password")
+    betus_api = st.text_input("BetUS API Key", type="password")
+    fanatics_api = st.text_input("Fanatics API Key", type="password")
+    underdog_api = st.text_input("Underdog API Key", type="password")
+    prizepicks_api = st.text_input("PrizePicks API Key", type="password")
+    fliff_api = st.text_input("Fliff API Key", type="password")
+
+    st.info("Enter your sportsbook API keys above to fetch your personalized odds.")
 st.sidebar.caption("Tip: Set PROVIDER=csv in .env to use sample data without an API key.")
 
 # Data provider
@@ -258,3 +308,6 @@ st.caption("""
 - `stake_reco_$` uses a capped Kelly (user-controlled cap) against your bankroll input.
 - Always verify odds and availability before betting.
 """)
+st.markdown("---")
+st.markdown("⚠️ **Disclaimer**: This tool is for informational purposes only. "
+            "Always verify odds directly with sportsbooks before betting.")
