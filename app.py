@@ -95,16 +95,7 @@ st.set_page_config(
 col1, col2 = st.columns([1, 8])  # logo in small column, rest empty
 with col1:
     st.image("assets/logo.png", width=80)  # make logo smaller
-st.markdown(
-    """
-    <style>
-    img {
-        filter: invert(1);
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+
         /* Global App Background */
         .stApp {
             background-color: #0f0f0f;  /* matte black background */
