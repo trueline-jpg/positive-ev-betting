@@ -98,12 +98,7 @@ st.dataframe(df)
 
 # Option to download the table
 csv = df.to_csv(index=False).encode("utf-8")
-st.download_button(
-    label="Download opportunities (CSV)",
-    data=csv,
-    file_name="opportunities.csv",
-    mime="text/csv",
-)
+
 import os, io, time, json, math
 from datetime import datetime, timezone
 import pandas as pd
