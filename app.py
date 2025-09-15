@@ -1,21 +1,22 @@
 from __future__ import annotations
-
-# --- stdlib / libs ---
 import os
 import pandas as pd
 import streamlit as st
 from dotenv import load_dotenv
 
-# --- local ---
 from ev_utils import (
     american_to_decimal, edge_decimal,
     kelly_fraction, estimate_true_prob_from_ref
 )
 
 # ------------------------------------------------------
-# Page config
+# Page config (fix title + favicon logo)
 # ------------------------------------------------------
-st.set_page_config(page_title="TruLine Betting", page_icon="assets/logo.png", layout="wide")
+st.set_page_config(
+    page_title="TruLine Betting",
+    page_icon="assets/logo.png",   # favicon
+    layout="wide"
+)
 
 # ------------------------------------------------------
 # Login
@@ -27,8 +28,6 @@ def login():
 
     if username in st.secrets.get("users", {}) and st.secrets["users"][username] == password:
         st.session_state["authenticated"] = True
-        st.session_state["user"] = username
-        st.sidebar.success(f"Welcome, {username}!")
     else:
         if username and password:
             st.sidebar.error("Invalid username or password")
@@ -72,24 +71,8 @@ st.markdown(
         background-color: #121212 !important;
       }
 
-      button[kind="primary"] {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-        font-weight: 600;
-        border-radius: 6px;
-        border: none;
-      }
-      button[kind="primary"]:hover { background-color: #e6e6e6 !important; }
-
-      .stSlider > div > div > div > div { background: #ffffff; }
-
-      .streamlit-expanderHeader {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-      }
-
       .brand-row { display: flex; align-items: center; gap: 16px; margin: 8px 0 4px; }
-      .brand-right h1 { margin: 0 0 2px 0; }
+      .brand-right h1 { margin: 0; }
       .brand-right p  { margin: 0; color: #b3b3b3; }
 
       img.app-logo {
@@ -108,11 +91,11 @@ st.markdown(
     """
     <div class="brand-row">
       <div class="brand-left">
-        <img class="app-logo" src="assets/logo.png" alt="TruLine logo" />
+        <img class="app-logo" src="app/assets/logo.png" alt="TruLine logo" />
       </div>
       <div class="brand-right">
-        <h1>📈 Positive EV Betting Finder</h1>
-        <p>Built by Armen Chapman | TruLine Betting</p>
+        <h1>📈 TruLine Betting</h1>
+        <p>The Positive EV Betting Finder</p>
       </div>
     </div>
     """,
@@ -124,7 +107,6 @@ st.markdown(
 # ------------------------------------------------------
 provider_name = os.getenv("PROVIDER", "csv")
 regions = os.getenv("REGIONS", "us")
-markets_env = os.getenv("MARKETS", "h2h,spreads,totals")
 default_books = [b.strip() for b in os.getenv(
     "BOOKS",
     "DraftKings,FanDuel,BetMGM,PointsBet,Caesars,Barstool,BetRivers,Unibet,Bet365,Pinnacle,BetUS,Fanatics,Underdog,Prizepicks,Fliff"
@@ -147,13 +129,8 @@ with st.sidebar.expander("🔍 Advanced Filters"):
     sports_filter = st.text_input("Sport keys include (comma-separated, blank = all)", value="")
     refresh_seconds = st.number_input("Refresh every (seconds)", min_value=10, value=refresh_seconds_env)
 
-st.sidebar.header("🔗 Sportsbook Connections")
-with st.sidebar.expander("⚡ Connect Sportsbooks", expanded=False):
-    st.info("Enter your sportsbook API keys above to fetch your personalized odds.")
-st.sidebar.caption("Tip: Set PROVIDER=csv in .env to use sample data without an API key.")
-
 # ------------------------------------------------------
-# Data provider (simplified for CSV)
+# Data provider (CSV only here)
 # ------------------------------------------------------
 def load_data_csv(path: str) -> pd.DataFrame:
     return pd.read_csv(path)
@@ -165,7 +142,7 @@ def fetch_odds() -> pd.DataFrame:
 
 df = fetch_odds()
 if df.empty:
-    st.warning("No data loaded yet. If using API, pick a sport in the sidebar. If using CSV, ensure sample_data/sample_odds.csv exists.")
+    st.warning("No data loaded yet. If using CSV, ensure sample_data/sample_odds.csv exists.")
     st.stop()
 
 # Filter
@@ -176,14 +153,23 @@ if "sports_filter" in locals() and sports_filter.strip():
     df = df[df["sport_key"].isin(allowed)]
 
 # ------------------------------------------------------
-# Compute EV table
+# Compute EV table (safe parsing)
 # ------------------------------------------------------
+def safe_float(val):
+    try:
+        return float(str(val).replace("+", "")) if val not in (None, "", "nan") else None
+    except Exception:
+        return None
+
 def compute_table(df: pd.DataFrame) -> pd.DataFrame:
     out = []
     for _, row in df.iterrows():
-        price = float(str(row["price_american"]).replace("+", ""))
-        opp_price_val = float(row.get("opp_price_american", 0)) if row.get("opp_price_american") else None
-        ref_price_val = float(row.get("ref_price_american", 0)) if row.get("ref_price_american") else None
+        price = safe_float(row["price_american"])
+        opp_price_val = safe_float(row.get("opp_price_american"))
+        ref_price_val = safe_float(row.get("ref_price_american"))
+
+        if price is None:
+            continue
 
         offer_decimal = american_to_decimal(price)
         side_implied = 1.0 / offer_decimal
@@ -225,11 +211,5 @@ st.dataframe(table, use_container_width=True, hide_index=True)
 csv = table.to_csv(index=False).encode("utf-8")
 st.download_button("Download opportunities (CSV)", data=csv, file_name="positive_ev_opportunities.csv", mime="text/csv")
 
-st.caption("""
-**Notes**
-- `true_prob_est` uses a sharp ref price when provided; otherwise it de-vigs the market pair.
-- `edge_pct` is expected return per $1 (e.g., 0.025 = +2.5%).
-- `stake_reco_$` uses a capped Kelly against your bankroll input.
-""")
 st.markdown("---")
-st.markdown("⚠️ **Disclaimer**: This tool is for informational purposes only. Always verify odds directly with sportsbooks before betting.")
+st.caption("⚠️ This tool is for informational purposes only. Always verify odds directly with sportsbooks before betting.")
