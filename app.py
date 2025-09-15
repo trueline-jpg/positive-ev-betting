@@ -40,11 +40,7 @@ if "authenticated" not in st.session_state or not st.session_state["authenticate
 
 
 # Sportsbooks to include
-books = st.sidebar.multiselect(
-    "Books to include",
-    ["DraftKings", "FanDuel", "BetMGM", "PointsBet"],
-    default=["DraftKings", "FanDuel", "BetMGM", "PointsBet"]
-)
+
 
 # Example odds table (placeholder data until you connect an API)
 
