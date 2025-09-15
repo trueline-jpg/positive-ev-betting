@@ -61,13 +61,116 @@ from ev_utils import (
 
 load_dotenv()
 
-st.set_page_config(page_title="Positive EV Finder", layout="wide")
-# Page configuration (already have, just update)
+load_dotenv()
+
+# Custom CSS styling
+st.markdown(
+    """
+    <style>
+    /* Center title */
+    .css-10trblm {
+        text-align: center;
+    }
+    /* Make sidebar headers stand out */
+    .css-1d391kg {
+        font-size: 18px !important;
+        font-weight: bold;
+        color: #FF4B4B;
+    }
+    /* Adjust padding so it's not squished */
+    .css-18e3th9 {
+        padding-top: 2rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 st.set_page_config(
-    page_title="Trueline Betting",
-    page_icon="📊",
+    page_title="TruLine Betting",
+    page_icon="📈",   # placeholder, will swap for your logo later
     layout="wide"
 )
+st.markdown(
+    """
+    <style>
+        /* Global App Background */
+        .stApp {
+            background-color: #0f0f0f;  /* matte black background */
+            color: #ffffff;             /* white text */
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+
+        /* Sidebar Styling */
+        section[data-testid="stSidebar"] {
+            background-color: #1a1a1a;  /* dark grey sidebar */
+            color: #ffffff;
+            border-right: 1px solid #333;
+        }
+
+        /* Titles */
+        h1, h2, h3, h4 {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Dataframe/Table Styling */
+        .dataframe th {
+            background-color: #1a1a1a !important;
+            color: #ffffff !important;
+            text-align: center;
+        }
+        .dataframe td {
+            color: #d1d1d1 !important;
+            background-color: #121212 !important;
+        }
+
+        /* Buttons */
+        button[kind="primary"] {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+        }
+        button[kind="primary"]:hover {
+            background-color: #e6e6e6 !important;
+        }
+
+        /* Slider */
+        .stSlider > div > div > div > div {
+            background: #ffffff;
+        }
+
+        /* Expander Panels */
+        .streamlit-expanderHeader {
+            background-color: #1a1a1a !important;
+            color: #ffffff !important;
+        }
+
+        /* Disclaimer Styling */
+        .disclaimer {
+            color: #b3b3b3;
+            font-size: 13px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+# Header with logo + branding
+col1, col2 = st.columns([0.2, 0.8])
+with col1:
+    st.image("assets/logo.png", use_column_width=True)  # add your logo to /assets/
+with col2:
+    st.markdown(
+        """
+        <h1 style='margin-bottom:0;'>📈 Positive EV Betting Finder</h1>
+        <p style='margin-top:0; color: #b3b3b3;'>Built by Armen Chapman | TruLine Betting</p>
+        """,
+        unsafe_allow_html=True
+    )
 
 # App title and your name
 st.title("📈 Positive EV Betting Finder (MVP)")
