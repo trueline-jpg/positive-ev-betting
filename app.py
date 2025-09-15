@@ -19,6 +19,7 @@ def login():
     username = st.sidebar.text_input("Username")
     password = st.sidebar.text_input("Password", type="password")
 
+    # Load from Streamlit secrets
     if username in st.secrets["users"] and st.secrets["users"][username] == password:
         st.session_state["authenticated"] = True
         st.session_state["user"] = username
@@ -27,34 +28,20 @@ def login():
         if username and password:
             st.sidebar.error("Invalid username or password")
 
+# Run login if not already authenticated
 if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
     login()
     st.stop()
 
 # ==============================
-# PAGE CONFIG
+# ENV + CONFIG
 # ==============================
+load_dotenv()
+
 st.set_page_config(
     page_title="TruLine Betting",
     layout="wide"
 )
-
-load_dotenv()
-
-# ==============================
-# HEADER + LOGO
-# ==============================
-col1, col2 = st.columns([0.15, 0.85])
-with col1:
-    st.image("assets/logo.png", width=80)
-with col2:
-    st.markdown(
-        """
-        <h1 style='margin-bottom:0;'>📈 TruLine Betting</h1>
-        <p style='margin-top:0; color: #b3b3b3;'>Positive EV Betting Finder</p>
-        """,
-        unsafe_allow_html=True
-    )
 
 # ==============================
 # CUSTOM CSS
@@ -64,8 +51,8 @@ st.markdown(
     <style>
     /* Global App Background */
     .stApp {
-        background-color: #0f0f0f;
-        color: #ffffff;
+        background-color: #0f0f0f;  /* matte black */
+        color: #ffffff;  /* white text */
         font-family: 'Helvetica Neue', sans-serif;
     }
 
@@ -105,18 +92,13 @@ st.markdown(
         background-color: #e6e6e6 !important;
     }
 
-    /* Sliders */
-    .stSlider > div > div > div > div {
-        background: #ffffff;
-    }
-
     /* Expander Panels */
     .streamlit-expanderHeader {
         background-color: #1a1a1a !important;
         color: #ffffff !important;
     }
 
-    /* Disclaimer Styling */
+    /* Disclaimer */
     .disclaimer {
         color: #b3b3b3;
         font-size: 13px;
@@ -127,6 +109,21 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+# ==============================
+# HEADER + LOGO
+# ==============================
+col1, col2 = st.columns([0.15, 0.85])
+with col1:
+    st.image("assets/logo.png", width=80)
+with col2:
+    st.markdown(
+        """
+        <h1 style='margin-bottom:0;'>📈 TruLine Betting</h1>
+        <p style='margin-top:0; color: #b3b3b3;'>Positive EV Betting Finder</p>
+        """,
+        unsafe_allow_html=True
+    )
 
 # ==============================
 # SIDEBAR CONFIG
@@ -158,8 +155,7 @@ with st.sidebar.expander("🔍 Advanced Filters"):
 
 st.sidebar.header("🔗 Sportsbook Connections")
 with st.sidebar.expander("⚡ Connect Sportsbooks", expanded=False):
-    st.info("Enter your sportsbook API keys above to fetch your personalized odds.")
-
+    st.info("Enter your sportsbook API keys above to fetch personalized odds.")
 st.sidebar.caption("Tip: Set PROVIDER=csv in .env to use sample data without an API key.")
 
 # ==============================
@@ -181,7 +177,6 @@ def fetch_odds() -> pd.DataFrame:
         if not api_key:
             st.error("Missing ODDS_API_KEY in environment. Set PROVIDER=csv to use sample data.")
             return pd.DataFrame()
-
         provider = OddsAPIProvider(api_key, regions=regions, markets="h2h", odds_format="american")
         sports = provider.get_sports()
         sport_options = [s.get("key") for s in sports]
@@ -222,6 +217,9 @@ def fetch_odds() -> pd.DataFrame:
                         })
         return pd.DataFrame(rows)
 
+# ==============================
+# FETCH DATA
+# ==============================
 df = fetch_odds()
 if df.empty:
     st.warning("No data loaded yet. If using API, pick a sport in the sidebar. If using CSV, ensure sample_data/sample_odds.csv exists.")
@@ -235,27 +233,33 @@ if sports_filter.strip():
     df = df[df["sport_key"].isin(allowed)]
 
 # ==============================
-# SAFE COMPUTE TABLE
+# COMPUTE EV TABLE
 # ==============================
-def safe_float(x):
-    try:
-        return float(x)
-    except (TypeError, ValueError):
-        return None
-
 def compute_table(df: pd.DataFrame) -> pd.DataFrame:
     out = []
     for _, row in df.iterrows():
-        price = safe_float(row["price_american"])
-        opp_price_val = safe_float(row.get("opp_price_american"))
-        ref_price_val = safe_float(row.get("ref_price_american"))
+        try:
+            price = float(str(row["price_american"]).replace("+","").replace("opp:","")) if isinstance(row["price_american"], str) and row["price_american"].startswith("opp:") else float(row["price_american"])
+        except Exception:
+            s = str(row["price_american"]).strip()
+            price = float(s.replace("+",""))
+            if s.startswith("-"):
+                price = float(s)
 
-        if price is None:
-            continue
+        opp_price = row.get("opp_price_american", None)
+        try:
+            opp_price_val = float(opp_price) if opp_price not in [None, ""] else None
+        except Exception:
+            opp_price_val = None
+
+        ref_price = row.get("ref_price_american", None)
+        try:
+            ref_price_val = float(ref_price) if ref_price not in [None, ""] else None
+        except Exception:
+            ref_price_val = None
 
         offer_decimal = american_to_decimal(price)
         side_implied = 1.0 / offer_decimal
-
         true_p = estimate_true_prob_from_ref(
             ref_price_val, fallback_margin, side_implied,
             (1.0 / american_to_decimal(opp_price_val)) if opp_price_val else 1.0 - side_implied
@@ -279,6 +283,7 @@ def compute_table(df: pd.DataFrame) -> pd.DataFrame:
             "offer_decimal": round(offer_decimal, 4),
             "true_prob_est": round(true_p, 4),
             "edge_pct": round(ev, 4),
+            "kelly_full": round(full_kelly, 4),
             "stake_reco_$": round(rec_stake, 2),
         })
     return pd.DataFrame(out)
@@ -288,7 +293,7 @@ table = table.sort_values(by="edge_pct", ascending=False)
 table = table[table["edge_pct"] >= min_edge]
 
 # ==============================
-# DISPLAY TABLE
+# DISPLAY
 # ==============================
 st.subheader("Opportunities")
 st.dataframe(table, use_container_width=True, hide_index=True)
@@ -298,5 +303,6 @@ st.download_button("Download opportunities (CSV)", data=csv, file_name="positive
 
 st.markdown("---")
 st.caption("""
-⚠️ **Disclaimer**: This tool is for informational purposes only. Always verify odds directly with sportsbooks before betting.
+⚠️ **Disclaimer**: This tool is for informational purposes only. 
+Always verify odds directly with sportsbooks before betting.
 """)
