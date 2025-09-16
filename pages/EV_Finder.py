@@ -10,6 +10,9 @@ from ev_utils import (
     kelly_fraction, estimate_true_prob_from_ref
 )
 
+use_global_style()
+header()
+
 # Optional provider (your existing oddsapi provider stays supported)
 def load_data_csv(path: str) -> pd.DataFrame:
     return pd.read_csv(path)
