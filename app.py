@@ -1,6 +1,8 @@
 from __future__ import annotations
 import streamlit as st
 from ui import use_global_style, header
+use_global_style()
+header()
 from pathlib import Path
 
 st.set_page_config(page_title="TruLine Betting", page_icon="📈", layout="wide")
