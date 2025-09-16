@@ -4,76 +4,60 @@ def use_global_style():
     st.markdown(
         """
         <style>
-        /* Global font and background */
-        html, body, [class*="css"]  {
+        body {
             font-family: 'Comfortaa', sans-serif;
-            background-color: #ffffff; /* white background */
-            color: #000000; /* black text */
+            background-color: white;
+            color: black;
         }
-
-        /* Navigation bar */
-        .top-nav {
+        .stButton>button {
+            background-color: #e63946;
+            color: white;
+            border-radius: 8px;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+        }
+        .stButton>button:hover {
+            background-color: #c92c3c;
+        }
+        .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 24px;
-            background-color: #ffffff;
-            border-bottom: 1px solid #eee;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #ddd;
         }
-        .top-nav .left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .top-nav .left img {
-            height: 32px;
-        }
-        .top-nav .links a {
-            margin: 0 10px;
+        .nav-links a {
+            margin: 0 1rem;
             text-decoration: none;
             font-weight: 600;
-            color: #333;
-            opacity: 0.8;
+            color: black;
         }
-        .top-nav .links a.active {
-            color: #e63946; /* red accent */
-            opacity: 1;
-        }
-        .top-nav .right a {
-            margin-left: 15px;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .btn-primary {
-            padding: 6px 14px;
-            border-radius: 6px;
-            background-color: #e63946;
-            color: white !important;
+        .nav-links a.active {
+            color: #e63946;
         }
         </style>
+        <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
         """,
         unsafe_allow_html=True,
     )
 
 def header(active="Home"):
-    """Renders the top navigation bar with active page highlighting"""
     st.markdown(
         f"""
-        <div class="top-nav">
-            <div class="left">
-                <img src="https://raw.githubusercontent.com/trueline-jpg/positive-ev-betting/main/assets/logo.png">
-                <span><b>TruLine Betting</b></span>
+        <div class="navbar">
+            <div>
+                <img src="https://raw.githubusercontent.com/trueline-jpg/positive-ev-betting/main/assets/logo.png" width="40"/>
+                <strong> TruLine Betting </strong>
             </div>
-            <div class="links">
+            <div class="nav-links">
                 <a href="/" class="{'active' if active=='Home' else ''}">Home</a>
                 <a href="/EV_Finder" class="{'active' if active=='EV Finder' else ''}">EV Finder</a>
                 <a href="/Tools" class="{'active' if active=='Tools' else ''}">Tools</a>
                 <a href="/Resources" class="{'active' if active=='Resources' else ''}">Resources</a>
                 <a href="/Subscription" class="{'active' if active=='Subscription' else ''}">Subscription</a>
-            </div>
-            <div class="right">
-                <a class="btn-primary" href="/Subscription">Free Trial</a>
-                <a href="#">Login</a>
+                <a href="/Subscription" class="btn btn-primary">Free Trial</a>
+                <a href="/Subscription">Login</a>
             </div>
         </div>
         """,
