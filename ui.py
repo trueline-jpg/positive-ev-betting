@@ -4,77 +4,78 @@ def use_global_style():
     st.markdown(
         """
         <style>
-        /* Global font */
+        /* Global font and background */
         html, body, [class*="css"]  {
             font-family: 'Comfortaa', sans-serif;
+            background-color: #ffffff; /* white background */
+            color: #000000; /* black text */
         }
 
-        /* Background & text */
-        .stApp {
-            background-color: #ffffff;  /* White background */
-            color: #000000;             /* Black text */
-        }
-
-        /* Navbar style */
-        .nav {
+        /* Navigation bar */
+        .top-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 2rem;
-            background-color: #000; /* Black navbar */
+            padding: 12px 24px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #eee;
         }
-
-        .nav .left {
+        .top-nav .left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
-
-        .nav .right a {
-            margin-left: 20px;
+        .top-nav .left img {
+            height: 32px;
+        }
+        .top-nav .links a {
+            margin: 0 10px;
             text-decoration: none;
-            color: white;
+            font-weight: 600;
+            color: #333;
+            opacity: 0.8;
+        }
+        .top-nav .links a.active {
+            color: #e63946; /* red accent */
+            opacity: 1;
+        }
+        .top-nav .right a {
+            margin-left: 15px;
+            text-decoration: none;
             font-weight: 600;
         }
-
-        .nav .right a:hover {
-            color: #ff4b4b; /* red accent */
-        }
-
         .btn-primary {
-            background: #ff4b4b;
-            color: white !important;
-            padding: 6px 16px;
+            padding: 6px 14px;
             border-radius: 6px;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .btn-primary:hover {
-            background: #e04343;
+            background-color: #e63946;
+            color: white !important;
         }
         </style>
         """,
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )
 
-def header():
+def header(active="Home"):
+    """Renders the top navigation bar with active page highlighting"""
     st.markdown(
-        """
-        <div class="nav">
+        f"""
+        <div class="top-nav">
             <div class="left">
-                <img src="assets/logo.png" width="40">
-                <span style="color:white; font-size:20px; font-weight:700;">TruLine Betting</span>
+                <img src="https://raw.githubusercontent.com/trueline-jpg/positive-ev-betting/main/assets/logo.png">
+                <span><b>TruLine Betting</b></span>
+            </div>
+            <div class="links">
+                <a href="/" class="{'active' if active=='Home' else ''}">Home</a>
+                <a href="/EV_Finder" class="{'active' if active=='EV Finder' else ''}">EV Finder</a>
+                <a href="/Tools" class="{'active' if active=='Tools' else ''}">Tools</a>
+                <a href="/Resources" class="{'active' if active=='Resources' else ''}">Resources</a>
+                <a href="/Subscription" class="{'active' if active=='Subscription' else ''}">Subscription</a>
             </div>
             <div class="right">
-                <a href="/EV_Finder">EV Finder</a>
-                <a href="/Tools">Tools</a>
-                <a href="/Resources">Resources</a>
-                <a href="/Subscription">Subscription</a>
-                <a class="btn-primary" href="/Login">Free Trial</a>
-                <a href="/Login">Login</a>
+                <a class="btn-primary" href="/Subscription">Free Trial</a>
+                <a href="#">Login</a>
             </div>
         </div>
         """,
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )
