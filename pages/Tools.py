@@ -1,30 +1,38 @@
 from ui import use_global_style, header
 import streamlit as st
 
-st.set_page_config(page_title="Tools • TruLine Betting", page_icon="🧰", layout="wide")
+# Page settings
+st.set_page_config(page_title="Tools • TruLine Betting", page_icon="🛠️", layout="wide")
+
+# Apply global style + header
 use_global_style()
 header(active="Tools")
 
+# Title
 st.markdown("## Tools")
+
+# Tools grid
 st.markdown(
     """
-<div class='grid'>
-  <div class='card'>
-    <h4>EV Finder</h4>
-    <p>Find positive-edge bets across your books.</p>
-    <a class='btn btn-small' href='/EV_Finder'>Open</a>
-  </div>
-  <div class='card'>
-    <h4>Arbitrage</h4>
-    <p>Risk-free pairs (coming soon).</p>
-    <button class='btn btn-small' disabled>Coming soon</button>
-  </div>
-  <div class='card'>
-    <h4>Parlay Builder</h4>
-    <p>Build smarter parlays (coming soon).</p>
-    <button class='btn btn-small' disabled>Coming soon</button>
-  </div>
-</div>
-""",
+    <div class="grid">
+        <div class="card">
+            <h4>EV Finder</h4>
+            <p>Find positive-edge bets across your books.</p>
+            <a class="btn btn-small" href="/EV_Finder">Open</a>
+        </div>
+        
+        <div class="card">
+            <h4>Arbitrage</h4>
+            <p>Risk-free pairs (coming soon).</p>
+            <button class="btn btn-small" disabled>Coming soon</button>
+        </div>
+        
+        <div class="card">
+            <h4>Parlay Builder</h4>
+            <p>Build smarter parlays (coming soon).</p>
+            <button class="btn btn-small" disabled>Coming soon</button>
+        </div>
+    </div>
+    """,
     unsafe_allow_html=True,
 )
