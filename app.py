@@ -72,12 +72,12 @@ with col1:
 with col2:
     st.markdown("### Arbitrage")
     st.write("Risk-free pairs (coming soon).")
-    st.button("Coming soon", disabled=True)
+    st.button("Coming soon", disabled=True, key="coming_soon_1")
 
 with col3:
     st.markdown("### Parlay Builder")
     st.write("Build smarter parlays (coming soon).")
-    st.button("Coming soon", disabled=True)
+    st.button("Coming soon", disabled=True, key="coming_soon_2")
 
 # --- FOOTER ---
 st.markdown("---")
