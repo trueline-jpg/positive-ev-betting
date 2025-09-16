@@ -1,105 +1,150 @@
 import streamlit as st
-from pathlib import Path
 
-def use_global_style():
-    # Inject Google Comfortaa + global CSS (light theme, red accents)
-    st.markdown(
-        """
-<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg: #ffffff;
-  --text:#0c0c0c;
-  --muted:#6b7280;
-  --primary:#ef4444; /* red */
-  --surface:#f7f7f8;
-  --border:#e5e7eb;
-}
-html, body, [data-testid="stAppViewContainer"], .stApp {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Comfortaa', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-}
-a { color: var(--text); text-decoration: none; }
-a:hover { opacity:.85; }
+# --- PAGE CONFIG ---
+st.set_page_config(
+    page_title="TruLine Betting",
+    layout="wide"
+)
 
-header.nav {
-  position: sticky; top:0; z-index:100;
-  background: var(--bg); border-bottom:1px solid var(--border);
-  padding: 14px 8px; margin-bottom: 8px;
-}
-.nav .row { display:flex; gap:16px; align-items:center; justify-content:space-between; }
-.nav .left, .nav .right { display:flex; gap:22px; align-items:center; }
-.logo-wrap { display:flex; gap:10px; align-items:center; font-weight:700; }
-.logo-wrap img { height:26px; width:auto; }
-
-.nav a.item { opacity:.9; }
-.nav a.item.active { color: var(--primary); font-weight:700; }
-
-.btn { display:inline-block; border:1px solid var(--border); padding:10px 14px; border-radius:8px; font-weight:600; }
-.btn.btn-primary { background: var(--primary); color:#fff; border-color: var(--primary); }
-.btn.btn-ghost { background: transparent; }
-.btn.btn-small { padding:8px 12px; font-size: 0.9rem; }
-
-.hero .eyebrow { color: var(--muted); font-weight:600; letter-spacing:.02em; }
-.hero .thin{font-weight:300;}
-.hero .tag{ margin-left:10px; font-size:.78rem; color:#fff; background:#111; padding:2px 8px; border-radius:999px;}
-.hero h1{ font-size: 3rem; line-height:1.1; margin:.5rem 0 1rem; }
-.hero .lead{ color: var(--muted); max-width: 720px; }
-.cta-row { display:flex; gap:12px; margin-top:18px; }
-
-.card{ background: var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px; }
-.grid{ display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:18px; }
-.center{ text-align:center; }
-.muted{ color: var(--muted); margin-left:10px; }
-
-.plan .price{ font-size:2rem; font-weight:700; }
-.plan .price span{ font-size:1rem; font-weight:400; color:var(--muted); margin-left:6px; }
-</style>
-""",
-        unsafe_allow_html=True,
-    )
-
-def header(active: str = "Home"):
-    # Left side: Logo + nav
-    left = """
-    <div class='left'>
-      <a class='logo-wrap' href="/"><img src="/app/static/logo" onerror="this.style.display='none'"/><span>TruLine Betting</span></a>
-      <a class='item {h}' href="/">Home</a>
-      <a class='item {t}' href="/Tools">Tools</a>
-      <a class='item {r}' href="/Resources">Resources</a>
-      <a class='item {s}' href="/Subscription">Subscription</a>
-    </div>
-    """.format(
-        h="active" if active=="Home" else "",
-        t="active" if active=="Tools" else "",
-        r="active" if active=="Resources" else "",
-        s="active" if active=="Subscription" else "",
-    )
-
-    # Right side: CTAs
-    right = """
-    <div class='right'>
-      <a class='item' href="/Subscription">Free Trial</a>
-      <a class='btn btn-primary' href="#login">Login</a>
-    </div>
+# --- CUSTOM STYLING ---
+st.markdown(
     """
+    <style>
+    /* Import Google Font Comfortaa */
+    @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap');
 
-    st.markdown(f"<header class='nav'><div class='row'>{left}{right}</div></header>", unsafe_allow_html=True)
+    html, body, [class*="css"] {
+        font-family: 'Comfortaa', sans-serif;
+    }
 
-    # Lightweight inline “Login” (email/password + social icons – visuals only)
-    with st.container():
-        if st.query_params.get("login") == "1":
-            st.subheader("Login")
-            with st.form("login_form"):
-                c1, c2 = st.columns(2)
-                email = c1.text_input("Email or Username")
-                pwd = c2.text_input("Password", type="password")
-                st.markdown("Or continue with:")
-                c3, c4, c5 = st.columns(3)
-                c3.button("Sign in with Google", use_container_width=True)
-                c4.button("Sign in with Apple", use_container_width=True)
-                c5.button("Sign in with Phone", use_container_width=True)
-                submitted = st.form_submit_button("Sign in")
-                if submitted:
-                    st.success("Sign-in simulated. Connect your auth later.")
+    /* Background */
+    .stApp {
+        background-color: #ffffff; /* White background */
+        color: #000000;            /* Black text */
+    }
+
+    /* Header */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background-color: #000000; /* Black header */
+        color: #ffffff;
+    }
+    .header .left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+    .header img {
+        height: 32px;
+    }
+    .header .right a {
+        margin-left: 20px;
+        text-decoration: none;
+        color: #ffffff;
+        font-weight: 600;
+    }
+    .header .btn {
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+    .header .btn-primary {
+        background-color: #ff4b4b; /* Red button */
+        color: #ffffff;
+    }
+    .header .btn-primary:hover {
+        background-color: #e04343;
+    }
+
+    /* Hero Section */
+    .hero {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+    .hero h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    .hero p {
+        font-size: 1.1rem;
+        color: #333333;
+    }
+    .hero .cta-row {
+        margin-top: 1.5rem;
+    }
+    .hero .btn {
+        margin: 0 8px;
+        padding: 10px 18px;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+    .hero .btn-primary {
+        background-color: #ff4b4b;
+        color: #fff;
+    }
+    .hero .btn-secondary {
+        background-color: #000;
+        color: #fff;
+    }
+    .hero .btn-secondary:hover {
+        background-color: #333;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# --- HEADER ---
+st.markdown(
+    """
+    <div class="header">
+        <div class="left">
+            <img src="assets/logo.png" alt="TruLine Logo">
+            TruLine Betting
+        </div>
+        <div class="right">
+            <a href="#">Tools</a>
+            <a href="#">Resources</a>
+            <a href="#">Subscription</a>
+            <a class="btn btn-primary" href="#">Free Trial</a>
+            <a class="btn btn-secondary" href="#">Login</a>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# --- HERO SECTION ---
+st.markdown(
+    """
+    <div class="hero">
+        <h1>We scan the lines. You place the bets.</h1>
+        <p>Find rare, high-edge opportunities using fair odds, vig removal, and disciplined bankroll controls.</p>
+        <div class="cta-row">
+            <a class="btn btn-primary" href="#">Try 7 Days Free</a>
+            <a class="btn btn-secondary" href="#">How it works</a>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# --- EXPLANATION SECTION ---
+st.markdown(
+    """
+    <h2>How does Positive EV Betting work?</h2>
+    <ul>
+        <li><b>Compute fair odds</b> by removing the bookmaker’s vig using the market pair.</li>
+        <li><b>Reference price</b>: Use a sharp book (e.g., Pinnacle) when available; otherwise de-vig the market.</li>
+        <li><b>Find edge</b>: We surface bets where offered odds exceed our fair odds.</li>
+        <li><b>Stake sizing</b>: Capped Kelly with a bankroll cap you control.</li>
+    </ul>
+    """,
+    unsafe_allow_html=True
+)
