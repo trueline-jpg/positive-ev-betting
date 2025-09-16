@@ -13,7 +13,20 @@ from ev_utils import (
 use_global_style()
 header()
 
-# Optional provider (your existing oddsapi provider stays supported)
+# ---------- SAFE FLOAT HELPER ----------
+def safe_float(value):
+    """Convert to float safely, return None if it fails."""
+    try:
+        if value is None:
+            return None
+        s = str(value).strip()
+        if s == "" or s.lower() in ("nan", "none"):
+            return None
+        return float(s.replace("+", "")) if not s.startswith("-") else float(s)
+    except Exception:
+        return None
+
+# ---------- PROVIDERS ----------
 def load_data_csv(path: str) -> pd.DataFrame:
     return pd.read_csv(path)
 
@@ -74,6 +87,7 @@ def fetch_odds(provider_name: str, regions: str) -> pd.DataFrame:
                         })
         return pd.DataFrame(rows)
 
+# ---------- MAIN COMPUTE ----------
 def compute_table(df: pd.DataFrame,
                   kelly_cap: float,
                   stake_bankroll: float,
@@ -81,26 +95,16 @@ def compute_table(df: pd.DataFrame,
                   min_edge: float) -> pd.DataFrame:
     out = []
     for _, row in df.iterrows():
-        s = str(row["price_american"]).strip()
-        price = float(s.replace("+","")) if not s.startswith("-") else float(s)
+        price = safe_float(row["price_american"])
+        opp_val = safe_float(row.get("opp_price_american"))
+        ref_val = safe_float(row.get("ref_price_american"))
 
-        opp = row.get("opp_price_american", None)
-        opp_s = None if opp is None else str(opp).strip()
-        opp_val = None
-        if opp_s:
-            opp_val = float(opp_s.replace("+", "")) if not opp_s.startswith("-") else float(opp_s)
-
-        ref = row.get("ref_price_american", None)
-        ref_val = None
-        if ref is not None:
-            try:
-                ref_val = float(str(ref))
-            except Exception:
-                ref_val = None
+        if price is None:
+            continue  # skip bad row
 
         offer_decimal = american_to_decimal(price)
         side_implied = 1.0 / offer_decimal
-        opp_implied = (1.0 / american_to_decimal(opp_val)) if opp_val is not None else 1 - side_implied
+        opp_implied = (1.0 / american_to_decimal(opp_val)) if opp_val else 1 - side_implied
 
         true_p = estimate_true_prob_from_ref(ref_val, fallback_margin, side_implied, opp_implied)
         ev = edge_decimal(offer_decimal, true_p)
@@ -127,20 +131,22 @@ def compute_table(df: pd.DataFrame,
         })
 
     out = pd.DataFrame(out)
+    if out.empty:
+        return out
     out = out.sort_values(by="edge_pct", ascending=False)
     out = out[out["edge_pct"] >= min_edge]
     return out.reset_index(drop=True)
 
-# --- PAGE ---------------------------------------------------------------------
+# ---------- PAGE ----------
 st.set_page_config(page_title="EV Finder • TruLine Betting", page_icon="📈", layout="wide")
 use_global_style()
-header(active="Tools")
+header(active="EV Finder")
 
 load_dotenv()
 provider_name = os.getenv("PROVIDER", "csv")
 regions = os.getenv("REGIONS", "us")
 
-# Sidebar controls (kept for “tool-y” feel)
+# Sidebar controls
 st.sidebar.header("⚙️ Settings")
 min_edge_default = float(os.getenv("MIN_EDGE", "0.02"))
 kelly_cap_default = float(os.getenv("KELLY_FRACTION", "0.25"))
@@ -182,7 +188,11 @@ table = compute_table(
     min_edge=min_edge,
 )
 
-st.dataframe(table, use_container_width=True, hide_index=True)
+if table.empty:
+    st.info("No bets passed the filters — try adjusting settings or load different data.")
+else:
+    st.dataframe(table, use_container_width=True, hide_index=True)
 
-csv = table.to_csv(index=False).encode("utf-8")
-st.download_button("Download opportunities (CSV)", data=csv, file_name="positive_ev_opportunities.csv", mime="text/csv")
+    csv = table.to_csv(index=False).encode("utf-8")
+    st.download_button("Download opportunities (CSV)", data=csv,
+                       file_name="positive_ev_opportunities.csv", mime="text/csv")
