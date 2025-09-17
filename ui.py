@@ -128,7 +128,7 @@ def header(active="Home"):
             </div>
         </div>
         """,
-        unsafe_allow_html=True  # 👈 this is what prevents raw HTML from showing
+        unsafe_allow_html=True   # 👈 THIS LINE IS CRITICAL
     )
 
 def footer():
