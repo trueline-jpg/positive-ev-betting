@@ -101,3 +101,5 @@ st.markdown("---")
 st.markdown(
     "Start your [7-day free trial](/Subscription) — no credit card required for sample data."
 )
+from ui import footer
+footer()
