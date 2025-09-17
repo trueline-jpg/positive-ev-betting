@@ -1,24 +1,39 @@
-from ui import use_global_style, header
 import streamlit as st
+from ui import use_global_style, header
 
-# Page settings
-st.set_page_config(page_title="Subscription • TruLine Betting", page_icon="💳", layout="wide")
+# --- PAGE CONFIG ---
+st.set_page_config(
+    page_title="Subscription • TruLine Betting",
+    page_icon="💳",
+    layout="wide"
+)
 
-# Apply global style + header
+# --- HIDE SIDEBAR ---
+st.markdown(
+    """
+    <style>
+        [data-testid="stSidebarNav"] {display: none;}
+        section[data-testid="stSidebar"] {display: none !important;}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# --- GLOBAL STYLE + NAV HEADER ---
 use_global_style()
 header(active="Subscription")
 
-# Title
-st.markdown("## Plans & Free Trial")
+# --- PAGE CONTENT ---
+st.markdown("## 💳 Plans & Free Trial")
 
-# Two-column layout
+# Two-column layout for pricing plans
 c1, c2 = st.columns(2)
 
 with c1:
     st.markdown(
         """
         <div class="plan card">
-            <h3>Gold</h3>
+            <h3>🥇 Gold</h3>
             <div class="price">$6.60<span>/day</span></div>
             <ul>
                 <li>EV Finder</li>
@@ -35,7 +50,7 @@ with c2:
     st.markdown(
         """
         <div class="plan card">
-            <h3>Platinum</h3>
+            <h3>💎 Platinum</h3>
             <div class="price">Apply</div>
             <ul>
                 <li>Everything in Gold</li>
