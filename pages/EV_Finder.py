@@ -202,3 +202,5 @@ else:
     csv = table.to_csv(index=False).encode("utf-8")
     st.download_button("Download opportunities (CSV)", data=csv,
                        file_name="positive_ev_opportunities.csv", mime="text/csv")
+from ui import footer
+footer()
