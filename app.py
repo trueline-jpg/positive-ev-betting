@@ -16,15 +16,9 @@ with col1:
     st.markdown(
         """
         <div class="hero">
-            <div class="eyebrow">
-                TruLine <span class="thin">Betting</span>
-                <span class="tag">POSITIVE EV</span>
-            </div>
+            <div class="eyebrow">TruLine <span class="thin">Betting</span><span class="tag">POSITIVE EV</span></div>
             <h1>We scan the lines.<br>You place the bets.</h1>
-            <p class="lead">
-                Find rare, high-edge opportunities using fair odds, vig removal, 
-                and disciplined bankroll controls.
-            </p>
+            <p class="lead">Find rare, high-edge opportunities using fair odds, vig removal, and disciplined bankroll controls.</p>
             <div class="cta-row">
                 <a class="btn btn-primary" href="/Subscription">Try 7 Days Free</a>
                 <a class="btn btn-ghost" href="#how">How it works</a>
@@ -39,7 +33,7 @@ with col2:
 
 # --- HOW IT WORKS SECTION ---
 st.markdown("---")
-st.markdown("## ⚡ How does Positive EV Betting work?")
+st.markdown("## How does Positive EV Betting work?")
 
 st.markdown(
     """
@@ -53,35 +47,35 @@ st.markdown(
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.markdown("### 🔎 Scan")
+    st.markdown("### Scan")
     st.write("Millions of odds across books & markets. **Live** and pre-match.")
 
 with col2:
-    st.markdown("### 📊 Detect Edge")
+    st.markdown("### Detect Edge")
     st.write("We compute fair probabilities and show EV in real-time.")
 
 with col3:
-    st.markdown("### 💰 Bet & Track")
+    st.markdown("### Bet & Track")
     st.write("Use capped Kelly, download opportunities, and track results.")
 
 # --- EXPLORE TOOLS ---
 st.markdown("---")
-st.markdown("## 🛠️ Explore tools")
+st.markdown("## Explore tools")
 
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.markdown("### 📈 EV Finder")
+    st.markdown("### EV Finder")
     st.write("Find high-edge bets across supported books.")
     st.page_link("pages/EV_Finder.py", label="Open")
 
 with col2:
-    st.markdown("### ♻️ Arbitrage")
+    st.markdown("### Arbitrage")
     st.write("Risk-free pairs (coming soon).")
     st.button("Coming soon", disabled=True, key="coming_soon_arb")
 
 with col3:
-    st.markdown("### 🎯 Parlay Builder")
+    st.markdown("### Parlay Builder")
     st.write("Build smarter parlays (coming soon).")
     st.button("Coming soon", disabled=True, key="coming_soon_parlay")
 
