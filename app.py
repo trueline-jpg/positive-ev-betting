@@ -1,105 +1,37 @@
 from __future__ import annotations
 import streamlit as st
-from ui import use_global_style, header
+from ui import use_global_style, header, footer
+
+# Import page modules
+import pages.EV_Finder as ev_finder
+import pages.Resources as resources
+import pages.Subscription as subscription
+import pages.Tools as tools
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="TruLine Betting", page_icon="📈", layout="wide")
 
-# --- HIDE DEFAULT SIDEBAR ---
-st.markdown(
-    """
-    <style>
-        [data-testid="stSidebarNav"] {display: none;}
-        section[data-testid="stSidebar"] {display: none !important;}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# --- GLOBAL STYLE + NAV HEADER ---
+# --- GLOBAL STYLE + NAV ---
 use_global_style()
-header(active="Home")
+active_page = st.session_state.get("page", "Home")
+header(active=active_page)
 
-# --- HERO SECTION ---
-col1, col2 = st.columns([7, 5], gap="large")
+# --- ROUTER ---
+if active_page == "Home":
+    st.markdown("## 🏠 Home Page")
+    st.write("Hero section, explainer, CTA buttons, etc. (your existing code here).")
 
-with col1:
-    st.markdown(
-        """
-        <div class="hero">
-            <div class="eyebrow">
-                TruLine <span class="thin">Betting</span>
-                <span class="tag">POSITIVE EV</span>
-            </div>
-            <h1>We scan the lines.<br>You place the bets.</h1>
-            <p class="lead">
-                Find rare, high-edge opportunities using fair odds,
-                vig removal, and disciplined bankroll controls.
-            </p>
-            <div class="cta-row">
-                <a class="btn btn-primary" href="/Subscription">Try 7 Days Free</a>
-                <a class="btn btn-ghost" href="#how">How it works</a>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+elif active_page == "EV Finder":
+    ev_finder.run()
 
-with col2:
-    st.image("assets/logo.png", use_container_width=True)
+elif active_page == "Resources":
+    resources.run()
 
-# --- HOW IT WORKS SECTION ---
-st.markdown("---")
-st.markdown("## How does Positive EV Betting work?")
+elif active_page == "Subscription":
+    subscription.run()
 
-st.markdown(
-    """
-    - **Compute fair odds** by removing the bookmaker’s vig using the market pair.  
-    - **Reference price**: Use a sharp book (e.g., Pinnacle) when available; otherwise de-vig the market.  
-    - **Find edge**: We surface bets where offered odds exceed our fair odds.  
-    - **Stake sizing**: Capped Kelly with a bankroll cap you control.  
-    """
-)
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.markdown("### Scan")
-    st.write("Millions of odds across books & markets. **Live** and pre-match.")
-
-with col2:
-    st.markdown("### Detect Edge")
-    st.write("We compute fair probabilities and show EV in real-time.")
-
-with col3:
-    st.markdown("### Bet & Track")
-    st.write("Use capped Kelly, download opportunities, and track results.")
-
-# --- EXPLORE TOOLS ---
-st.markdown("---")
-st.markdown("## Explore tools")
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.markdown("### EV Finder")
-    st.write("Find high-edge bets across supported books.")
-    st.page_link("pages/EV_Finder.py", label="Open")
-
-with col2:
-    st.markdown("### Arbitrage")
-    st.write("Risk-free pairs (coming soon).")
-    st.button("Coming soon", disabled=True, key="coming_soon_arb")
-
-with col3:
-    st.markdown("### Parlay Builder")
-    st.write("Build smarter parlays (coming soon).")
-    st.button("Coming soon", disabled=True, key="coming_soon_parlay")
+elif active_page == "Tools":
+    tools.run()
 
 # --- FOOTER ---
-st.markdown("---")
-st.markdown(
-    "Start your [7-day free trial](/Subscription) — no credit card required for sample data."
-)
-from ui import footer
 footer()
