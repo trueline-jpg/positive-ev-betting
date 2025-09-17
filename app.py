@@ -5,7 +5,7 @@ from ui import use_global_style, header
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="TruLine Betting", page_icon="📈", layout="wide")
 
-# --- HIDE SIDEBAR (remove Streamlit default sidebar completely) ---
+# --- HIDE DEFAULT SIDEBAR ---
 st.markdown(
     """
     <style>
@@ -27,9 +27,15 @@ with col1:
     st.markdown(
         """
         <div class="hero">
-            <div class="eyebrow">TruLine <span class="thin">Betting</span><span class="tag">POSITIVE EV</span></div>
+            <div class="eyebrow">
+                TruLine <span class="thin">Betting</span>
+                <span class="tag">POSITIVE EV</span>
+            </div>
             <h1>We scan the lines.<br>You place the bets.</h1>
-            <p class="lead">Find rare, high-edge opportunities using fair odds, vig removal, and disciplined bankroll controls.</p>
+            <p class="lead">
+                Find rare, high-edge opportunities using fair odds,
+                vig removal, and disciplined bankroll controls.
+            </p>
             <div class="cta-row">
                 <a class="btn btn-primary" href="/Subscription">Try 7 Days Free</a>
                 <a class="btn btn-ghost" href="#how">How it works</a>
@@ -92,4 +98,6 @@ with col3:
 
 # --- FOOTER ---
 st.markdown("---")
-st.markdown("Start your [7-day free trial](/Subscription) — no credit card required for sample data.")
+st.markdown(
+    "Start your [7-day free trial](/Subscription) — no credit card required for sample data."
+)
