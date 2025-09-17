@@ -9,17 +9,8 @@ def use_global_style():
             background-color: white;
             color: black;
         }
-        .stButton>button {
-            background-color: #e63946;
-            color: white;
-            border-radius: 8px;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            font-weight: 600;
-        }
-        .stButton>button:hover {
-            background-color: #c92c3c;
-        }
+
+        /* Navbar */
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -27,16 +18,60 @@ def use_global_style():
             padding: 1rem 2rem;
             border-bottom: 1px solid #ddd;
         }
-        .nav-links a {
+
+        /* Left: logo + name */
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .navbar-left img {
+            width: 40px;
+            height: 40px;
+        }
+
+        /* Center: nav links */
+        .navbar-center a {
             margin: 0 1rem;
             text-decoration: none;
             font-weight: 600;
             color: black;
         }
-        .nav-links a.active {
+
+        .navbar-center a.active {
             color: #e63946;
         }
+
+        /* Right: buttons */
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-login {
+            font-weight: 600;
+            color: black;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: #e63946;
+            color: white !important;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #c92c3c;
+        }
         </style>
+
         <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
         """,
         unsafe_allow_html=True,
@@ -46,18 +81,25 @@ def header(active="Home"):
     st.markdown(
         f"""
         <div class="navbar">
-            <div>
-                <img src="https://raw.githubusercontent.com/trueline-jpg/positive-ev-betting/main/assets/logo.png" width="40"/>
-                <strong> TruLine Betting </strong>
+            <!-- Left -->
+            <div class="navbar-left">
+                <img src="https://raw.githubusercontent.com/trueline-jpg/positive-ev-betting/main/assets/logo.png"/>
+                TruLine Betting
             </div>
-            <div class="nav-links">
+
+            <!-- Center -->
+            <div class="navbar-center">
                 <a href="/" class="{'active' if active=='Home' else ''}">Home</a>
                 <a href="/EV_Finder" class="{'active' if active=='EV Finder' else ''}">EV Finder</a>
                 <a href="/Tools" class="{'active' if active=='Tools' else ''}">Tools</a>
                 <a href="/Resources" class="{'active' if active=='Resources' else ''}">Resources</a>
                 <a href="/Subscription" class="{'active' if active=='Subscription' else ''}">Subscription</a>
-                <a href="/Subscription" class="btn btn-primary">Free Trial</a>
-                <a href="/Subscription">Login</a>
+            </div>
+
+            <!-- Right -->
+            <div class="navbar-right">
+                <a href="/Subscription" class="btn-login">Login</a>
+                <a href="/Subscription" class="btn-primary">Try for Free</a>
             </div>
         </div>
         """,
