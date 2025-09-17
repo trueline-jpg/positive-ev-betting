@@ -6,7 +6,7 @@ st.set_page_config(page_title="Tools • TruLine Betting", page_icon="🛠️", 
 use_global_style()
 header(active="Tools")
 
-st.markdown("## 🛠️ Tools")
+st.markdown("## Tools")
 
 st.markdown(
     """
