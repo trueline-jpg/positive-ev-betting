@@ -6,7 +6,7 @@ st.set_page_config(page_title="Subscription • TruLine Betting", page_icon="�
 use_global_style()
 header(active="Subscription")
 
-st.markdown("## 💳 Plans & Free Trial")
+st.markdown("## Plans & Free Trial")
 
 c1, c2 = st.columns(2)
 
