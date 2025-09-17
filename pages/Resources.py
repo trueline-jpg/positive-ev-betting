@@ -37,3 +37,5 @@ st.markdown(
 
 st.markdown("### ❓ Help Center")
 st.info("Support and docs are coming soon. For now, you can reach us via the contact link in the footer.")
+from ui import footer
+footer()
