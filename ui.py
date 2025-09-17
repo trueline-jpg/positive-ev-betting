@@ -99,8 +99,7 @@ def use_global_style():
     )
 
 def header(active="Home"):
-    st.markdown(
-        f"""
+    nav_html = f"""
         <div class="navbar">
             <!-- Left -->
             <div class="navbar-left">
@@ -123,9 +122,8 @@ def header(active="Home"):
                 <a href="/Subscription" class="btn-primary">Try for Free</a>
             </div>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    """
+    st.markdown(nav_html, unsafe_allow_html=True)
 
 def footer():
     st.markdown(
