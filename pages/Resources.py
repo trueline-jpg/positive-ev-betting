@@ -6,7 +6,7 @@ st.set_page_config(page_title="Resources • TruLine Betting", page_icon="📚",
 use_global_style()
 header(active="Resources")
 
-st.markdown("## 📚 Resources")
+st.markdown("## Resources")
 st.markdown("### Guides")
 st.markdown(
     "- Positive EV Basics\n"
@@ -14,7 +14,6 @@ st.markdown(
     "- Understanding Vig\n"
     "- Kelly Criterion (capped)"
 )
-
 st.markdown("### Help Center")
 st.info("Support and docs are coming soon. For now, you can reach us via the contact link in the footer.")
 
