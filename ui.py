@@ -128,7 +128,7 @@ def header(active="Home"):
             </div>
         </div>
         """,
-        unsafe_allow_html=True,  # 👈 THIS fixes the issue
+        unsafe_allow_html=True  # 👈 this is what prevents raw HTML from showing
     )
 
 def footer():
@@ -144,5 +144,5 @@ def footer():
             </p>
         </div>
         """,
-        unsafe_allow_html=True,  # 👈 also needed here
+        unsafe_allow_html=True
     )
