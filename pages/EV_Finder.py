@@ -4,11 +4,17 @@ import pandas as pd
 import streamlit as st
 from dotenv import load_dotenv
 
-from ui import use_global_style, header
+from ui import use_global_style, header, footer
 from ev_utils import (
     american_to_decimal, edge_decimal,
     kelly_fraction, estimate_true_prob_from_ref
 )
+
+# --- PAGE CONFIG ---
+st.set_page_config(page_title="EV Finder • TruLine Betting", page_icon="📈", layout="wide")
+
+use_global_style()
+header(active="EV Finder")
 
 # --- SAFE FLOAT HELPER ---
 def safe_float(value):
@@ -44,7 +50,7 @@ def fetch_odds(provider_name: str, regions: str) -> pd.DataFrame:
         provider = OddsAPIProvider(api_key, regions=regions, markets="h2h", odds_format="american")
         sports = provider.get_sports()
         sport_options = [s.get("key") for s in sports]
-        chosen = st.selectbox("Choose a sport (live from API)", options=sport_options)
+        chosen = st.selectbox("Choose a sport", options=sport_options)
         data = provider.get_odds(chosen)
 
         rows = []
@@ -82,12 +88,9 @@ def fetch_odds(provider_name: str, regions: str) -> pd.DataFrame:
                         })
         return pd.DataFrame(rows)
 
-# --- MAIN COMPUTE ---
-def compute_table(df: pd.DataFrame,
-                  kelly_cap: float,
-                  stake_bankroll: float,
-                  fallback_margin: float,
-                  min_edge: float) -> pd.DataFrame:
+# --- COMPUTE EV TABLE ---
+def compute_table(df: pd.DataFrame, kelly_cap: float, stake_bankroll: float,
+                  fallback_margin: float, min_edge: float) -> pd.DataFrame:
     out = []
     for _, row in df.iterrows():
         price = safe_float(row["price_american"])
@@ -132,75 +135,33 @@ def compute_table(df: pd.DataFrame,
     out = out[out["edge_pct"] >= min_edge]
     return out.reset_index(drop=True)
 
-# --- PAGE CONFIG ---
-st.set_page_config(page_title="EV Finder • TruLine Betting", page_icon="📈", layout="wide")
-
-# --- HIDE SIDEBAR ---
-st.markdown(
-    """
-    <style>
-        [data-testid="stSidebarNav"] {display: none;}
-        section[data-testid="stSidebar"] {display: none !important;}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# --- STYLE + HEADER ---
-use_global_style()
-header(active="EV Finder")
-
-# --- SETTINGS PANEL ---
+# --- PAGE BODY ---
 load_dotenv()
 provider_name = os.getenv("PROVIDER", "csv")
 regions = os.getenv("REGIONS", "us")
 
-st.markdown("## ⚙️ Settings")
-
-min_edge_default = float(os.getenv("MIN_EDGE", "0.02"))
-kelly_cap_default = float(os.getenv("KELLY_FRACTION", "0.25"))
-fallback_margin = float(os.getenv("REF_FALLBACK_MARGIN", "0.03"))
-
-col1, col2, col3 = st.columns(3)
-with col1:
-    min_edge = st.slider("Min Edge (EV%)", 0.0, 0.10, min_edge_default, 0.005, format="%.3f")
-with col2:
-    bankroll = st.number_input("Bankroll ($)", min_value=10.0, value=1000.0, step=50.0)
-with col3:
-    kelly_cap = st.slider("Kelly Cap (fraction of full Kelly)", 0.0, 1.0, kelly_cap_default, 0.05)
-
-books_default = [b.strip() for b in os.getenv(
-    "BOOKS", "DraftKings,FanDuel,BetMGM,PointsBet,Pinnacle"
-).split(",") if b.strip()]
-selected_books = st.multiselect("Books to include", books_default, default=books_default)
-
-# --- DATA ---
 st.markdown("## 📈 Positive EV Betting Finder")
-df = fetch_odds(provider_name, regions)
+st.caption("TruLine Betting")
 
+min_edge = 0.02
+kelly_cap = 0.25
+bankroll = 1000
+fallback_margin = 0.03
+
+df = fetch_odds(provider_name, regions)
 if df.empty:
-    st.warning("No data loaded. If using API, pick a sport. If using CSV, ensure `sample_data/sample_odds.csv` exists.")
+    st.warning("No data loaded. If using API, check config. If using CSV, ensure `sample_data/sample_odds.csv` exists.")
     st.stop()
 
-if selected_books:
-    df = df[df["book"].isin(selected_books)]
-
-with st.expander("Advanced filters"):
-    sports_filter = st.text_input("Sport keys include (comma-separated, blank = all)", value="")
-    if sports_filter.strip():
-        allowed = [s.strip() for s in sports_filter.split(",") if s.strip()]
-        df = df[df["sport_key"].isin(allowed)]
-
-# --- TABLE ---
-table = compute_table(df, kelly_cap=kelly_cap, stake_bankroll=bankroll,
-                      fallback_margin=fallback_margin, min_edge=min_edge)
+table = compute_table(df, kelly_cap, bankroll, fallback_margin, min_edge)
 
 if table.empty:
     st.info("No bets passed the filters — try adjusting settings or load different data.")
 else:
     st.dataframe(table, use_container_width=True, hide_index=True)
+
     csv = table.to_csv(index=False).encode("utf-8")
     st.download_button("Download opportunities (CSV)", data=csv,
                        file_name="positive_ev_opportunities.csv", mime="text/csv")
-from ui import footer
+
 footer()
