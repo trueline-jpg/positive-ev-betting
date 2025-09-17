@@ -70,6 +70,27 @@ def use_global_style():
         .btn-primary:hover {
             background-color: #c92c3c;
         }
+
+        /* Footer */
+        .footer {
+            margin-top: 3rem;
+            padding: 2rem;
+            background-color: #111;
+            color: #f5f5f5;
+            text-align: center;
+            border-top: 1px solid #333;
+        }
+
+        .footer a {
+            margin: 0 1rem;
+            color: #e63946;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
         </style>
 
         <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
@@ -101,6 +122,22 @@ def header(active="Home"):
                 <a href="/Subscription" class="btn-login">Login</a>
                 <a href="/Subscription" class="btn-primary">Try for Free</a>
             </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+def footer():
+    st.markdown(
+        """
+        <div class="footer">
+            <p>© 2025 TruLine Betting</p>
+            <p>
+                <a href="mailto:contact@trulinebetting.com">Contact</a> |
+                <a href="https://discord.com" target="_blank">Discord</a> |
+                <a href="https://youtube.com" target="_blank">YouTube</a> |
+                <a href="https://tiktok.com" target="_blank">TikTok</a>
+            </p>
         </div>
         """,
         unsafe_allow_html=True,
