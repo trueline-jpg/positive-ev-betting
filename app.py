@@ -5,6 +5,17 @@ from ui import use_global_style, header
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="TruLine Betting", page_icon="📈", layout="wide")
 
+# --- HIDE SIDEBAR (remove Streamlit default sidebar completely) ---
+st.markdown(
+    """
+    <style>
+        [data-testid="stSidebarNav"] {display: none;}
+        section[data-testid="stSidebar"] {display: none !important;}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # --- GLOBAL STYLE + NAV HEADER ---
 use_global_style()
 header(active="Home")
@@ -72,12 +83,12 @@ with col1:
 with col2:
     st.markdown("### Arbitrage")
     st.write("Risk-free pairs (coming soon).")
-    st.button("Coming soon", disabled=True, key="coming_soon_1")
+    st.button("Coming soon", disabled=True, key="coming_soon_arb")
 
 with col3:
     st.markdown("### Parlay Builder")
     st.write("Build smarter parlays (coming soon).")
-    st.button("Coming soon", disabled=True, key="coming_soon_2")
+    st.button("Coming soon", disabled=True, key="coming_soon_parlay")
 
 # --- FOOTER ---
 st.markdown("---")
