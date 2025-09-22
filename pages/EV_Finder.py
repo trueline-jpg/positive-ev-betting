@@ -60,7 +60,7 @@ def fetch_odds(provider_name: str, regions: str) -> pd.DataFrame:
             commence = ev.get("commence_time", "")
 
             for bk in ev.get("bookmakers", []):
-                book = bk.get("title", "")
+                book = bk.get("title", "Unknown Sportsbook")
                 for mk in bk.get("markets", []):
                     if mk.get("key") != "h2h":
                         continue
@@ -107,6 +107,7 @@ def compute_table(df: pd.DataFrame,
         out.append({
             "Matchup": row.get("matchup", "Unknown"),
             "Team / Player": row.get("player_team", "Unknown"),
+            "Sportsbook": row.get("book", "Unknown"),
             "Odds (American)": price,
             "Implied Probability": f"{side_implied:.2%}",
             "Expected Probability": f"{true_p:.2%}",
