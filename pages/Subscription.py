@@ -21,7 +21,7 @@ with c1:
                 <li>Real-time scanning</li>
                 <li>Download CSV</li>
             </ul>
-            <a class="btn btn-primary" href="#">Try 7 days free</a>
+            <a class="btn btn-primary" href="#" target="_self">Try 7 days free</a>
         </div>
         """,
         unsafe_allow_html=True,
