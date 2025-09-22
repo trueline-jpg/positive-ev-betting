@@ -5,6 +5,17 @@ from ui import use_global_style, header, footer
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="TruLine Betting", page_icon="📈", layout="wide")
 
+# --- HIDE SIDEBAR (remove Streamlit default sidebar completely) ---
+st.markdown(
+    """
+    <style>
+        [data-testid="stSidebarNav"] {display: none;}
+        section[data-testid="stSidebar"] {display: none !important;}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # --- GLOBAL STYLE + NAV HEADER ---
 use_global_style()
 header(active="Home")
@@ -16,12 +27,11 @@ with col1:
     st.markdown(
         """
         <div class="hero">
-            <div class="eyebrow">TruLine <span class="thin">Betting</span><span class="tag">POSITIVE EV</span></div>
             <h1>We scan the lines.<br>You place the bets.</h1>
             <p class="lead">Find rare, high-edge opportunities using fair odds, vig removal, and disciplined bankroll controls.</p>
             <div class="cta-row">
-                <a class="btn btn-primary" href="/Subscription">Try 7 Days Free</a>
-                <a class="btn btn-ghost" href="#how">How it works</a>
+                <a class="btn btn-primary" href="/Subscription" target="_self">Try 7 Days Free</a>
+                <a class="btn btn-ghost" href="#how" target="_self">How it works</a>
             </div>
         </div>
         """,
@@ -80,4 +90,5 @@ with col3:
     st.button("Coming soon", disabled=True, key="coming_soon_parlay")
 
 # --- FOOTER ---
+st.markdown("---")
 footer()
