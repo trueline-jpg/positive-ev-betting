@@ -15,6 +15,6 @@ st.markdown(
     "- Kelly Criterion (capped)"
 )
 st.markdown("### Help Center")
-st.info("Support and docs are coming soon. For now, you can reach us via the contact link in the footer.")
+st.info("Support and docs are coming soon. For now, reach us via the contact link in the footer.")
 
 footer()
