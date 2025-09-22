@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from ui import use_global_style, header
 from ev_utils import (
     american_to_decimal, edge_decimal,
-    kelly_fraction, estimate_true_prob_from_ref
+    estimate_true_prob_from_ref
 )
 
 # ---------- STYLE ----------
@@ -53,13 +53,14 @@ def fetch_odds(provider_name: str, regions: str) -> pd.DataFrame:
 
         rows = []
         for ev in data:
-            home = ev.get("home_team")
-            away = ev.get("away_team")
-            sport_key = ev.get("sport_key")
-            commence = ev.get("commence_time")
+            home = ev.get("home_team", "")
+            away = ev.get("away_team", "")
+            matchup = f"{home} vs {away}" if home and away else ev.get("sport_key", "Unknown")
+            sport_key = ev.get("sport_key", "Unknown")
+            commence = ev.get("commence_time", "")
 
             for bk in ev.get("bookmakers", []):
-                book = bk.get("title")
+                book = bk.get("title", "")
                 for mk in bk.get("markets", []):
                     if mk.get("key") != "h2h":
                         continue
@@ -67,12 +68,13 @@ def fetch_odds(provider_name: str, regions: str) -> pd.DataFrame:
                     if len(outcomes) < 2:
                         continue
                     for oc in outcomes:
-                        name = oc.get("name")
+                        name = oc.get("name", "")
                         price_am = oc.get("price")
-                        opp_price = [o.get("price") for o in outcomes if o != oc][0]
+                        opp_price = [o.get("price") for o in outcomes if o != oc]
+                        opp_price = opp_price[0] if opp_price else None
 
                         rows.append({
-                            "matchup": f"{home} vs {away}",
+                            "matchup": matchup,
                             "player_team": name,
                             "price_american": price_am,
                             "opp_price_american": opp_price,
@@ -88,7 +90,7 @@ def compute_table(df: pd.DataFrame,
                   min_edge: float) -> pd.DataFrame:
     out = []
     for _, row in df.iterrows():
-        price = safe_float(row["price_american"])
+        price = safe_float(row.get("price_american"))
         opp_val = safe_float(row.get("opp_price_american"))
 
         if price is None:
@@ -103,8 +105,8 @@ def compute_table(df: pd.DataFrame,
         ev = edge_decimal(offer_decimal, true_p)
 
         out.append({
-            "Matchup": row["matchup"],
-            "Team / Player": row["player_team"],
+            "Matchup": row.get("matchup", "Unknown"),
+            "Team / Player": row.get("player_team", "Unknown"),
             "Odds (American)": price,
             "Implied Probability": f"{side_implied:.2%}",
             "Expected Probability": f"{true_p:.2%}",
@@ -114,7 +116,7 @@ def compute_table(df: pd.DataFrame,
     if out.empty:
         return out
     out = out.sort_values(by="Expected Probability", ascending=False)
-    out = out[ev >= min_edge] if "ev" in locals() else out
+    out = out[out["Expected Probability"].notnull()]
     return out.reset_index(drop=True)
 
 # ---------- PAGE ----------
