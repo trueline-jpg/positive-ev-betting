@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import streamlit as st
 from dotenv import load_dotenv
+from datetime import datetime
 
 from ui import use_global_style, header
 from ev_utils import (
@@ -50,7 +51,7 @@ def fetch_odds(provider_name: str, regions: str) -> pd.DataFrame:
         rows = []
         for ev in data:
             sport_key = ev.get("sport_key")
-            commence = ev.get("commence_time")
+            commence = ev.get("commence_time")  # raw timestamp
             home = ev.get("home_team")
             away = ev.get("away_team")
             for bk in ev.get("bookmakers", []):
@@ -107,10 +108,22 @@ def compute_table(df: pd.DataFrame,
         full_k = kelly_fraction(true_p, offer_decimal)
         stake_reco = max(0.0, min(full_k * kelly_cap * stake_bankroll, stake_bankroll))
 
+        # Format date/time if available
+        game_time = row.get("commence_time")
+        if pd.notna(game_time):
+            try:
+                dt = datetime.fromisoformat(game_time.replace("Z", "+00:00"))
+                game_time_str = dt.strftime("%b %d, %Y %I:%M %p")
+            except Exception:
+                game_time_str = "Unknown"
+        else:
+            game_time_str = "Unknown"
+
         matchup = f"{row['home_team']} vs {row['away_team']}" if row.get("home_team") and row.get("away_team") else "Unknown Matchup"
 
         out.append({
             "Matchup": matchup,
+            "Date/Time": game_time_str,
             "Book": row["book"],
             "Side": row["side"],
             "Odds (American)": price,
