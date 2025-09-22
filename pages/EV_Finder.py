@@ -11,6 +11,22 @@ from ev_utils import (
     kelly_fraction, estimate_true_prob_from_ref
 )
 
+# ---------- SPORT MAPPING ----------
+SPORT_MAP = {
+    "americanfootball_nfl": "NFL",
+    "basketball_nba": "NBA",
+    "baseball_mlb": "MLB",
+    "soccer_epl": "EPL",
+    "soccer_spain_la_liga": "La Liga",
+    "soccer_uefa_champs_league": "UCL",
+    "soccer_fifa_world_cup": "World Cup",
+    "tennis_atp": "ATP Tennis",
+    "mma_mixed_martial_arts": "MMA",
+}
+
+def clean_sport(sport_key: str) -> str:
+    return SPORT_MAP.get(sport_key, sport_key.replace("_", " ").title())
+
 # ---------- SAFE FLOAT ----------
 def safe_float(value):
     try:
@@ -45,13 +61,13 @@ def fetch_odds(provider_name: str, regions: str) -> pd.DataFrame:
         provider = OddsAPIProvider(api_key, regions=regions, markets="h2h", odds_format="american")
         sports = provider.get_sports()
         sport_options = [s.get("key") for s in sports]
-        chosen = st.sidebar.selectbox("Sport (live from API)", options=sport_options)
+        chosen = st.sidebar.selectbox("Select Sport (API)", options=sport_options)
         data = provider.get_odds(chosen)
 
         rows = []
         for ev in data:
             sport_key = ev.get("sport_key")
-            commence = ev.get("commence_time")  # raw timestamp
+            commence = ev.get("commence_time")
             home = ev.get("home_team")
             away = ev.get("away_team")
             for bk in ev.get("bookmakers", []):
@@ -107,7 +123,6 @@ def compute_table(df: pd.DataFrame,
         full_k = kelly_fraction(true_p, offer_decimal)
         stake_reco = max(0.0, min(full_k * kelly_cap * stake_bankroll, stake_bankroll))
 
-        # Format date/time
         game_time = row.get("commence_time")
         if pd.notna(game_time):
             try:
@@ -123,7 +138,7 @@ def compute_table(df: pd.DataFrame,
         out.append({
             "Matchup": matchup,
             "Date/Time": game_time_str,
-            "Sport": row["sport_key"],
+            "Sport": clean_sport(row["sport_key"]),
             "Book": row["book"],
             "Side": row["side"],
             "Odds (American)": price,
@@ -136,7 +151,6 @@ def compute_table(df: pd.DataFrame,
     out = pd.DataFrame(out)
     if out.empty:
         return out
-    # Sort by Date (earliest first)
     out["SortTime"] = pd.to_datetime(out["Date/Time"], errors="coerce")
     out = out.sort_values(by=["SortTime", "Edge %"], ascending=[True, False])
     out = out.drop(columns=["SortTime"])
@@ -151,18 +165,15 @@ load_dotenv()
 provider_name = os.getenv("PROVIDER", "csv")
 regions = os.getenv("REGIONS", "us")
 
-# Sidebar controls
 st.sidebar.header("⚙️ Filters & Settings")
 
-min_edge_default = float(os.getenv("MIN_EDGE", "0.02"))
-kelly_cap_default = float(os.getenv("KELLY_FRACTION", "0.25"))
-fallback_margin = float(os.getenv("REF_FALLBACK_MARGIN", "0.03"))
-
 # EV threshold filter
+min_edge_default = float(os.getenv("MIN_EDGE", "0.02"))
 min_edge = st.sidebar.slider("Minimum EV %", 0.0, 0.30, min_edge_default, 0.01)
 
 # Bankroll & Kelly settings
 bankroll = st.sidebar.number_input("Bankroll ($)", min_value=10.0, value=1000.0, step=50.0)
+kelly_cap_default = float(os.getenv("KELLY_FRACTION", "0.25"))
 kelly_cap = st.sidebar.slider("Kelly Cap (fraction of full Kelly)", 0.0, 1.0, kelly_cap_default, 0.05)
 
 # Books filter
@@ -170,10 +181,11 @@ books_default = [b.strip() for b in os.getenv(
     "BOOKS",
     "DraftKings,FanDuel,BetMGM,PointsBet,Pinnacle,Caesars,BetRivers,Barstool,Unibet,Bet365"
 ).split(",") if b.strip()]
-selected_books = st.sidebar.multiselect("Sportsbooks to include", books_default, default=books_default)
+selected_books = st.sidebar.multiselect("Sportsbooks", books_default, default=books_default)
 
-# Sports filter
-sport_filter = st.sidebar.text_input("Filter by sport (comma-separated, blank = all)", value="")
+# Sports filter dropdown
+sports_available = list(SPORT_MAP.values())
+selected_sports = st.sidebar.multiselect("Sports", sports_available, default=sports_available)
 
 st.markdown("## 📈 Positive EV Betting Finder")
 st.caption("TruLine Betting")
@@ -187,15 +199,15 @@ if df.empty:
 if selected_books:
     df = df[df["book"].isin(selected_books)]
 
-if sport_filter.strip():
-    allowed = [s.strip() for s in sport_filter.split(",") if s.strip()]
-    df = df[df["sport_key"].isin(allowed)]
+if selected_sports:
+    allowed_keys = [k for k, v in SPORT_MAP.items() if v in selected_sports]
+    df = df[df["sport_key"].isin(allowed_keys)]
 
 table = compute_table(
     df=df,
     kelly_cap=kelly_cap,
     stake_bankroll=bankroll,
-    fallback_margin=fallback_margin,
+    fallback_margin=float(os.getenv("REF_FALLBACK_MARGIN", "0.03")),
     min_edge=min_edge,
 )
 
