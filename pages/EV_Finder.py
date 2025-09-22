@@ -64,7 +64,6 @@ def fetch_odds(provider_name: str, regions: str) -> pd.DataFrame:
                         name = oc.get("name")
                         side = "home" if name == home else ("away" if name == away else name)
                         price_am = oc.get("price")
-                        # quick opp pair
                         opp_price = None
                         for oc2 in outcomes:
                             if oc2 is not oc:
@@ -108,7 +107,7 @@ def compute_table(df: pd.DataFrame,
         full_k = kelly_fraction(true_p, offer_decimal)
         stake_reco = max(0.0, min(full_k * kelly_cap * stake_bankroll, stake_bankroll))
 
-        # Format date/time if available
+        # Format date/time
         game_time = row.get("commence_time")
         if pd.notna(game_time):
             try:
@@ -124,6 +123,7 @@ def compute_table(df: pd.DataFrame,
         out.append({
             "Matchup": matchup,
             "Date/Time": game_time_str,
+            "Sport": row["sport_key"],
             "Book": row["book"],
             "Side": row["side"],
             "Odds (American)": price,
@@ -136,7 +136,10 @@ def compute_table(df: pd.DataFrame,
     out = pd.DataFrame(out)
     if out.empty:
         return out
-    out = out.sort_values(by="Edge %", ascending=False)
+    # Sort by Date (earliest first)
+    out["SortTime"] = pd.to_datetime(out["Date/Time"], errors="coerce")
+    out = out.sort_values(by=["SortTime", "Edge %"], ascending=[True, False])
+    out = out.drop(columns=["SortTime"])
     return out.reset_index(drop=True)
 
 # ---------- PAGE ----------
@@ -149,20 +152,28 @@ provider_name = os.getenv("PROVIDER", "csv")
 regions = os.getenv("REGIONS", "us")
 
 # Sidebar controls
-st.sidebar.header("⚙️ Settings")
+st.sidebar.header("⚙️ Filters & Settings")
+
 min_edge_default = float(os.getenv("MIN_EDGE", "0.02"))
 kelly_cap_default = float(os.getenv("KELLY_FRACTION", "0.25"))
 fallback_margin = float(os.getenv("REF_FALLBACK_MARGIN", "0.03"))
 
-min_edge = st.sidebar.slider("Min Edge (EV%)", 0.0, 0.10, min_edge_default, 0.005, format="%.3f")
+# EV threshold filter
+min_edge = st.sidebar.slider("Minimum EV %", 0.0, 0.30, min_edge_default, 0.01)
+
+# Bankroll & Kelly settings
 bankroll = st.sidebar.number_input("Bankroll ($)", min_value=10.0, value=1000.0, step=50.0)
 kelly_cap = st.sidebar.slider("Kelly Cap (fraction of full Kelly)", 0.0, 1.0, kelly_cap_default, 0.05)
 
+# Books filter
 books_default = [b.strip() for b in os.getenv(
     "BOOKS",
     "DraftKings,FanDuel,BetMGM,PointsBet,Pinnacle,Caesars,BetRivers,Barstool,Unibet,Bet365"
 ).split(",") if b.strip()]
-selected_books = st.sidebar.multiselect("Books to include", books_default, default=books_default)
+selected_books = st.sidebar.multiselect("Sportsbooks to include", books_default, default=books_default)
+
+# Sports filter
+sport_filter = st.sidebar.text_input("Filter by sport (comma-separated, blank = all)", value="")
 
 st.markdown("## 📈 Positive EV Betting Finder")
 st.caption("TruLine Betting")
@@ -172,15 +183,13 @@ if df.empty:
     st.warning("No data loaded. If using API, pick a sport in the sidebar. If using CSV, ensure `sample_data/sample_odds.csv` exists.")
     st.stop()
 
+# Apply filters
 if selected_books:
     df = df[df["book"].isin(selected_books)]
 
-# Optional free-text sports filter
-with st.expander("Advanced filters"):
-    sports_filter = st.text_input("Sport keys include (comma-separated, blank = all)", value="")
-    if sports_filter.strip():
-        allowed = [s.strip() for s in sports_filter.split(",") if s.strip()]
-        df = df[df["sport_key"].isin(allowed)]
+if sport_filter.strip():
+    allowed = [s.strip() for s in sport_filter.split(",") if s.strip()]
+    df = df[df["sport_key"].isin(allowed)]
 
 table = compute_table(
     df=df,
