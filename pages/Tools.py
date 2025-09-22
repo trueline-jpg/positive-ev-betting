@@ -14,7 +14,7 @@ st.markdown(
         <div class="card">
             <h4>EV Finder</h4>
             <p>Find positive-edge bets across your books.</p>
-            <a class="btn btn-small" href="/EV_Finder">Open</a>
+            <a class="btn btn-small" href="/EV_Finder" target="_self">Open</a>
         </div>
         
         <div class="card">
