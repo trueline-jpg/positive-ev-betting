@@ -114,17 +114,16 @@ def compute_table(df: pd.DataFrame,
             "Book": row["book"],
             "Side": row["side"],
             "Odds (American)": price,
-            "Implied Probability": round(side_implied, 3),
-            "Expected Probability": round(true_p, 3),
-            "Edge %": round(ev, 3),
-            "Stake ($)": round(stake_reco, 2)
+            "Implied Probability": f"{side_implied * 100:.1f}%",
+            "Expected Probability": f"{true_p * 100:.1f}%",
+            "Edge %": f"{ev * 100:.1f}%",
+            "Stake ($)": f"${stake_reco:.2f}"
         })
 
     out = pd.DataFrame(out)
     if out.empty:
         return out
     out = out.sort_values(by="Edge %", ascending=False)
-    out = out[out["Edge %"] >= min_edge]
     return out.reset_index(drop=True)
 
 # ---------- PAGE ----------
@@ -181,17 +180,7 @@ table = compute_table(
 if table.empty:
     st.info("No bets passed the filters — try adjusting settings or load different data.")
 else:
-    # Professional styled table
-    st.dataframe(table.style.set_table_styles(
-        [{
-            "selector": "thead th",
-            "props": [("background-color", "#e63946"), ("color", "white"), ("font-weight", "bold"), ("text-align", "center")]
-        },
-         {
-            "selector": "tbody td",
-            "props": [("text-align", "center")]
-        }]
-    ), use_container_width=True, hide_index=True)
+    st.dataframe(table, use_container_width=True, hide_index=True)
 
     csv = table.to_csv(index=False).encode("utf-8")
     st.download_button("Download opportunities (CSV)", data=csv,
