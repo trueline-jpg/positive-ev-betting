@@ -3,12 +3,14 @@ import os
 import pandas as pd
 import streamlit as st
 from dotenv import load_dotenv
+
 from ui import use_global_style, header, footer
 from ev_utils import (
-    american_to_decimal, edge_decimal, kelly_fraction, estimate_true_prob_from_ref
+    american_to_decimal, implied_prob_from_american, edge_decimal,
+    kelly_fraction, estimate_true_prob_from_ref
 )
 
-# --- SAFE FLOAT ---
+# ---------- SAFE FLOAT ----------
 def safe_float(value):
     try:
         if value is None:
@@ -20,7 +22,7 @@ def safe_float(value):
     except Exception:
         return None
 
-# --- PROVIDERS ---
+# ---------- PROVIDERS ----------
 def load_data_csv(path: str) -> pd.DataFrame:
     return pd.read_csv(path)
 
@@ -32,8 +34,12 @@ def fetch_odds(provider_name: str, regions: str) -> pd.DataFrame:
         api_key = os.getenv("ODDS_API_KEY", "")
         if not api_key:
             return pd.DataFrame()
+
         provider = OddsAPIProvider(api_key, regions=regions, markets="h2h", odds_format="american")
-        data = provider.get_odds("upcoming")
+        sports = provider.get_sports()
+        sport_options = [s.get("key") for s in sports]
+        chosen = st.sidebar.selectbox("Sport (live from API)", options=sport_options)
+        data = provider.get_odds(chosen)
 
         rows = []
         for ev in data:
@@ -49,7 +55,7 @@ def fetch_odds(provider_name: str, regions: str) -> pd.DataFrame:
                     outcomes = mk.get("outcomes", [])
                     for oc in outcomes:
                         name = oc.get("name")
-                        side = "home" if name == home else ("away" if name == away else "draw")
+                        side = "home" if name == home else ("away" if name == away else name)
                         price_am = oc.get("price")
                         opp_price = None
                         for oc2 in outcomes:
@@ -57,18 +63,19 @@ def fetch_odds(provider_name: str, regions: str) -> pd.DataFrame:
                                 opp_price = oc2.get("price")
                                 break
                         rows.append({
-                            "Matchup": f"{home} vs {away}",
-                            "Date/Time": commence,
-                            "Sport": sport_key,
-                            "Book": book,
-                            "Side": side,
-                            "Odds (American)": price_am,
+                            "sport_key": sport_key,
+                            "commence_time": commence,
+                            "home_team": home,
+                            "away_team": away,
+                            "book": book,
+                            "side": side,
+                            "price_american": price_am,
                             "opp_price_american": opp_price,
                             "ref_price_american": None,
                         })
         return pd.DataFrame(rows)
 
-# --- COMPUTE ---
+# ---------- MAIN COMPUTE ----------
 def compute_table(df: pd.DataFrame,
                   kelly_cap: float,
                   stake_bankroll: float,
@@ -76,7 +83,7 @@ def compute_table(df: pd.DataFrame,
                   min_edge: float) -> pd.DataFrame:
     out = []
     for _, row in df.iterrows():
-        price = safe_float(row["Odds (American)"])
+        price = safe_float(row["price_american"])
         opp_val = safe_float(row.get("opp_price_american"))
         ref_val = safe_float(row.get("ref_price_american"))
 
@@ -92,17 +99,29 @@ def compute_table(df: pd.DataFrame,
         full_k = kelly_fraction(true_p, offer_decimal)
         stake_reco = max(0.0, min(full_k * kelly_cap * stake_bankroll, stake_bankroll))
 
+        matchup = f"{row['home_team']} vs {row['away_team']}"
+
+        sport_map = {
+            "americanfootball_nfl": "NFL",
+            "basketball_nba": "NBA",
+            "soccer_epl": "EPL",
+            "soccer_laliga": "La Liga",
+            "baseball_mlb": "MLB",
+            "basketball_wnba": "WNBA",
+        }
+        sport_label = sport_map.get(row["sport_key"], row["sport_key"])
+
         out.append({
-            "Matchup": row["Matchup"],
-            "Date/Time": row["Date/Time"],
-            "Sport": row["Sport"],
-            "Book": row["Book"],
-            "Side": row["Side"],
+            "Matchup": matchup,
+            "Date/Time": row["commence_time"],
+            "Sport": sport_label,
+            "Book": row["book"],
+            "Side": row["side"],
             "Odds (American)": price,
-            "Implied Probability": f"{round(side_implied*100,1)}%",
-            "Expected Probability": f"{round(true_p*100,1)}%",
-            "Edge %": f"{round(ev*100,1)}%",
-            "Stake ($)": f"${round(stake_reco,2)}",
+            "Implied Probability": f"{round(side_implied * 100, 1)}%",
+            "Expected Probability": f"{round(true_p * 100, 1)}%",
+            "Edge %": f"{round(ev * 100, 1)}%",
+            "Stake ($)": f"${round(stake_reco, 2)}",
         })
 
     out = pd.DataFrame(out)
@@ -112,8 +131,9 @@ def compute_table(df: pd.DataFrame,
     out = out.reset_index(drop=True)
     return out
 
-# --- PAGE ---
+# ---------- PAGE ----------
 st.set_page_config(page_title="EV Finder • TruLine Betting", page_icon="📈", layout="wide")
+
 use_global_style()
 header(active="EV Finder")
 
@@ -131,22 +151,27 @@ min_edge = st.sidebar.slider("Min Edge (EV%)", 0.0, 0.10, min_edge_default, 0.00
 bankroll = st.sidebar.number_input("Bankroll ($)", min_value=10.0, value=1000.0, step=50.0)
 kelly_cap = st.sidebar.slider("Kelly Cap (fraction of full Kelly)", 0.0, 1.0, kelly_cap_default, 0.05)
 
-# Load data
+books_default = [b.strip() for b in os.getenv(
+    "BOOKS",
+    "DraftKings,FanDuel,BetMGM,PointsBet,Pinnacle"
+).split(",") if b.strip()]
+selected_books = st.sidebar.multiselect("Books to include", books_default, default=books_default)
+
+# Sports filter
+sports_options = ["NFL", "NBA", "WNBA", "MLB", "EPL", "La Liga"]
+selected_sports = st.sidebar.multiselect("Sports", sports_options, default=sports_options)
+
+st.markdown("## 📈 Positive EV Betting Finder")
+st.caption("TruLine Betting")
+
 df = fetch_odds(provider_name, regions)
 if df.empty:
-    st.warning("No data loaded.")
+    st.warning("No data loaded. Try API or check sample_data.")
     st.stop()
 
-# Filters
-sports_filter = st.sidebar.multiselect("Filter by Sport", options=df["Sport"].unique().tolist())
-if sports_filter:
-    df = df[df["Sport"].isin(sports_filter)]
+if selected_books:
+    df = df[df["book"].isin(selected_books)]
 
-books_filter = st.sidebar.multiselect("Filter by Sportsbook", options=df["Book"].unique().tolist())
-if books_filter:
-    df = df[df["Book"].isin(books_filter)]
-
-# Compute table
 table = compute_table(
     df=df,
     kelly_cap=kelly_cap,
@@ -158,10 +183,13 @@ table = compute_table(
 if table.empty:
     st.info("No bets passed the filters — try adjusting settings.")
 else:
+    if selected_sports:
+        table = table[table["Sport"].isin(selected_sports)]
     st.dataframe(table, use_container_width=True, hide_index=True)
+
     csv = table.to_csv(index=False).encode("utf-8")
     st.download_button("Download opportunities (CSV)", data=csv,
                        file_name="positive_ev_opportunities.csv", mime="text/csv")
 
-# Footer
+# --- FOOTER ---
 footer()
