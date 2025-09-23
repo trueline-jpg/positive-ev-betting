@@ -19,9 +19,9 @@ def use_global_style():
             border-bottom: 1px solid #ddd;
         }
 
-        /* Left: logo only */
+        /* Left: logo */
         .navbar-left img {
-            width: 60px;   /* make logo bigger */
+            width: 60px;  /* Bigger logo */
             height: auto;
         }
 
@@ -32,10 +32,7 @@ def use_global_style():
             font-weight: 600;
             color: black;
         }
-
-        .navbar-center a.active {
-            color: #e63946;
-        }
+        .navbar-center a.active { color: #e63946; }
 
         /* Right: buttons */
         .navbar-right {
@@ -43,13 +40,11 @@ def use_global_style():
             align-items: center;
             gap: 1rem;
         }
-
         .btn-login {
             font-weight: 600;
             color: black;
             text-decoration: none;
         }
-
         .btn-primary {
             background-color: #e63946;
             color: white !important;
@@ -58,12 +53,8 @@ def use_global_style():
             font-weight: 600;
             text-decoration: none;
         }
-
-        .btn-primary:hover {
-            background-color: #c92c3c;
-        }
+        .btn-primary:hover { background-color: #c92c3c; }
         </style>
-
         <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
         """,
         unsafe_allow_html=True,
@@ -92,6 +83,22 @@ def header(active="Home"):
                 <a href="/Subscription" target="_self" class="btn-login">Login</a>
                 <a href="/Subscription" target="_self" class="btn-primary">Try for Free</a>
             </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+def footer():
+    st.markdown(
+        """
+        <div class="footer">
+            <p>© 2025 TruLine Betting</p>
+            <p>
+                <a href="mailto:contact@trulinebetting.com">Contact</a> |
+                <a href="https://discord.com" target="_blank">Discord</a> |
+                <a href="https://youtube.com" target="_blank">YouTube</a> |
+                <a href="https://tiktok.com" target="_blank">TikTok</a>
+            </p>
         </div>
         """,
         unsafe_allow_html=True,
