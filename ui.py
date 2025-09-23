@@ -21,7 +21,7 @@ def use_global_style():
 
         /* Left: logo only */
         .navbar-left img {
-            width: 80px;   /* bigger logo */
+            width: 70px;  /* Increased size */
             height: auto;
         }
 
@@ -32,7 +32,6 @@ def use_global_style():
             font-weight: 600;
             color: black;
         }
-
         .navbar-center a.active {
             color: #e63946;
         }
@@ -58,7 +57,6 @@ def use_global_style():
             font-weight: 600;
             text-decoration: none;
         }
-
         .btn-primary:hover {
             background-color: #c92c3c;
         }
@@ -72,14 +70,12 @@ def use_global_style():
             text-align: center;
             border-top: 1px solid #333;
         }
-
         .footer a {
             margin: 0 1rem;
             color: #e63946;
             text-decoration: none;
             font-weight: 600;
         }
-
         .footer a:hover {
             text-decoration: underline;
         }
@@ -115,7 +111,7 @@ def header(active="Home"):
             </div>
         </div>
         """,
-        unsafe_allow_html=True,
+        unsafe_allow_html=True,   # 🔥 THIS is what was missing
     )
 
 def footer():
@@ -124,10 +120,10 @@ def footer():
         <div class="footer">
             <p>© 2025 TruLine Betting</p>
             <p>
-                <a href="mailto:contact@trulinebetting.com" target="_self">Contact</a> |
-                <a href="https://discord.com" target="_self">Discord</a> |
-                <a href="https://youtube.com" target="_self">YouTube</a> |
-                <a href="https://tiktok.com" target="_self">TikTok</a>
+                <a href="mailto:contact@trulinebetting.com">Contact</a> |
+                <a href="https://discord.com" target="_blank">Discord</a> |
+                <a href="https://youtube.com" target="_blank">YouTube</a> |
+                <a href="https://tiktok.com" target="_blank">TikTok</a>
             </p>
         </div>
         """,
