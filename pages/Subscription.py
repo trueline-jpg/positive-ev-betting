@@ -1,12 +1,15 @@
 import streamlit as st
 from ui import use_global_style, header, footer
 
+# --- PAGE CONFIG ---
 st.set_page_config(page_title="Subscription • TruLine Betting", page_icon="💳", layout="wide")
 
+# --- GLOBAL STYLE + NAV HEADER ---
 use_global_style()
 header(active="Subscription")
 
-st.markdown("## Plans & Free Trial")
+# --- PAGE CONTENT ---
+st.markdown("## 💳 Plans & Free Trial")
 
 c1, c2 = st.columns(2)
 
@@ -44,4 +47,5 @@ with c2:
         unsafe_allow_html=True,
     )
 
+# --- FOOTER ---
 footer()
