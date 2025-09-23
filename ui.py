@@ -21,7 +21,7 @@ def use_global_style():
 
         /* Left: logo only */
         .navbar-left img {
-            width: 80px;  /* bigger logo */
+            width: 100px;   /* make logo bigger */
             height: auto;
         }
 
@@ -87,45 +87,42 @@ def use_global_style():
     )
 
 def header(active="Home"):
-    st.markdown(
-        f"""
-        <div class="navbar">
-            <!-- Left -->
-            <div class="navbar-left">
-                <img src="https://raw.githubusercontent.com/trueline-jpg/positive-ev-betting/main/assets/logo.png"/>
-            </div>
-
-            <!-- Center -->
-            <div class="navbar-center">
-                <a href="/" target="_self" class="{'active' if active=='Home' else ''}">Home</a>
-                <a href="/EV_Finder" target="_self" class="{'active' if active=='EV Finder' else ''}">EV Finder</a>
-                <a href="/Tools" target="_self" class="{'active' if active=='Tools' else ''}">Tools</a>
-                <a href="/Resources" target="_self" class="{'active' if active=='Resources' else ''}">Resources</a>
-                <a href="/Subscription" target="_self" class="{'active' if active=='Subscription' else ''}">Subscription</a>
-            </div>
-
-            <!-- Right -->
-            <div class="navbar-right">
-                <a href="/Subscription" target="_self" class="btn-login">Login</a>
-                <a href="/Subscription" target="_self" class="btn-primary">Try for Free</a>
-            </div>
+    navbar_html = f"""
+    <div class="navbar">
+        <!-- Left -->
+        <div class="navbar-left">
+            <img src="https://raw.githubusercontent.com/trueline-jpg/positive-ev-betting/main/assets/logo.png"/>
         </div>
-        """,
-        unsafe_allow_html=True   # ✅ ensures HTML is rendered
-    )
+
+        <!-- Center -->
+        <div class="navbar-center">
+            <a href="/" target="_self" class="{'active' if active=='Home' else ''}">Home</a>
+            <a href="/EV_Finder" target="_self" class="{'active' if active=='EV Finder' else ''}">EV Finder</a>
+            <a href="/Tools" target="_self" class="{'active' if active=='Tools' else ''}">Tools</a>
+            <a href="/Resources" target="_self" class="{'active' if active=='Resources' else ''}">Resources</a>
+            <a href="/Subscription" target="_self" class="{'active' if active=='Subscription' else ''}">Subscription</a>
+        </div>
+
+        <!-- Right -->
+        <div class="navbar-right">
+            <a href="/Subscription" target="_self" class="btn-login">Login</a>
+            <a href="/Subscription" target="_self" class="btn-primary">Try for Free</a>
+        </div>
+    </div>
+    """
+
+    st.markdown(navbar_html, unsafe_allow_html=True)
 
 def footer():
-    st.markdown(
-        """
-        <div class="footer">
-            <p>© 2025 TruLine Betting</p>
-            <p>
-                <a href="mailto:contact@trulinebetting.com">Contact</a> |
-                <a href="https://discord.com" target="_blank">Discord</a> |
-                <a href="https://youtube.com" target="_blank">YouTube</a> |
-                <a href="https://tiktok.com" target="_blank">TikTok</a>
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    footer_html = """
+    <div class="footer">
+        <p>© 2025 TruLine Betting</p>
+        <p>
+            <a href="mailto:contact@trulinebetting.com">Contact</a> |
+            <a href="https://discord.com" target="_blank">Discord</a> |
+            <a href="https://youtube.com" target="_blank">YouTube</a> |
+            <a href="https://tiktok.com" target="_blank">TikTok</a>
+        </p>
+    </div>
+    """
+    st.markdown(footer_html, unsafe_allow_html=True)
