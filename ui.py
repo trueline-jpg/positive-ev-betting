@@ -21,7 +21,7 @@ def use_global_style():
 
         /* Left: logo only */
         .navbar-left img {
-            width: 70px;  /* Increased size */
+            width: 80px;  /* bigger logo */
             height: auto;
         }
 
@@ -83,7 +83,7 @@ def use_global_style():
 
         <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
         """,
-        unsafe_allow_html=True,
+        unsafe_allow_html=True
     )
 
 def header(active="Home"):
@@ -111,7 +111,7 @@ def header(active="Home"):
             </div>
         </div>
         """,
-        unsafe_allow_html=True,   # 🔥 THIS is what was missing
+        unsafe_allow_html=True   # ✅ ensures HTML is rendered
     )
 
 def footer():
@@ -127,5 +127,5 @@ def footer():
             </p>
         </div>
         """,
-        unsafe_allow_html=True,
+        unsafe_allow_html=True
     )
