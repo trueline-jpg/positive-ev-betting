@@ -1,20 +1,8 @@
-from __future__ import annotations
 import streamlit as st
-from ui import use_global_style, header, footer
+from ui import use_global_style, header
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="TruLine Betting", page_icon="📈", layout="wide")
-
-# --- HIDE SIDEBAR (remove Streamlit default sidebar completely) ---
-st.markdown(
-    """
-    <style>
-        [data-testid="stSidebarNav"] {display: none;}
-        section[data-testid="stSidebar"] {display: none !important;}
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
 
 # --- GLOBAL STYLE + NAV HEADER ---
 use_global_style()
@@ -91,4 +79,4 @@ with col3:
 
 # --- FOOTER ---
 st.markdown("---")
-footer()
+st.markdown("Start your [7-day free trial](/Subscription) — no credit card required for sample data.")
