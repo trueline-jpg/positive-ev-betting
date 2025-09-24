@@ -4,12 +4,23 @@ from ui import use_global_style, header, footer
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Tools • TruLine Betting", page_icon="🛠️", layout="wide")
 
+# --- HIDE SIDEBAR ---
+st.markdown(
+    """
+    <style>
+        [data-testid="stSidebarNav"] {display: none;}
+        section[data-testid="stSidebar"] {display: none !important;}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # --- GLOBAL STYLE + NAV HEADER ---
 use_global_style()
 header(active="Tools")
 
-# --- PAGE CONTENT ---
-st.markdown("## 🛠️ Tools")
+# --- CONTENT ---
+st.markdown("## Tools")
 
 st.markdown(
     """
