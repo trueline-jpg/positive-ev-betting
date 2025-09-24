@@ -1,10 +1,8 @@
 import streamlit as st
-from ui import use_global_style, header, footer
+from ui import use_global_style, header
 
-# --- PAGE CONFIG ---
 st.set_page_config(page_title="Resources • TruLine Betting", page_icon="📚", layout="wide")
 
-# --- HIDE SIDEBAR ---
 st.markdown(
     """
     <style>
@@ -15,11 +13,9 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- GLOBAL STYLE + NAV HEADER ---
 use_global_style()
 header(active="Resources")
 
-# --- CONTENT ---
 st.markdown("## Resources")
 st.markdown("### Guides")
 st.markdown(
@@ -29,7 +25,4 @@ st.markdown(
     "- Kelly Criterion (capped)"
 )
 st.markdown("### Help Center")
-st.info("Support and docs are coming soon. For now, you can reach us via the contact link in the footer.")
-
-# --- FOOTER ---
-footer()
+st.info("Support and docs are coming soon.")
