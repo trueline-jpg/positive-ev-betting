@@ -21,7 +21,7 @@ def use_global_style():
 
         /* Left: logo */
         .navbar-left img {
-            width: 60px;  /* Bigger logo */
+            width: 60px;   /* made logo larger */
             height: auto;
         }
 
@@ -32,7 +32,10 @@ def use_global_style():
             font-weight: 600;
             color: black;
         }
-        .navbar-center a.active { color: #e63946; }
+
+        .navbar-center a.active {
+            color: #e63946;
+        }
 
         /* Right: buttons */
         .navbar-right {
@@ -40,11 +43,13 @@ def use_global_style():
             align-items: center;
             gap: 1rem;
         }
+
         .btn-login {
             font-weight: 600;
             color: black;
             text-decoration: none;
         }
+
         .btn-primary {
             background-color: #e63946;
             color: white !important;
@@ -53,8 +58,12 @@ def use_global_style():
             font-weight: 600;
             text-decoration: none;
         }
-        .btn-primary:hover { background-color: #c92c3c; }
+
+        .btn-primary:hover {
+            background-color: #c92c3c;
+        }
         </style>
+
         <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
         """,
         unsafe_allow_html=True,
