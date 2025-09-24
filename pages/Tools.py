@@ -1,10 +1,8 @@
 import streamlit as st
-from ui import use_global_style, header, footer
+from ui import use_global_style, header
 
-# --- PAGE CONFIG ---
 st.set_page_config(page_title="Tools • TruLine Betting", page_icon="🛠️", layout="wide")
 
-# --- HIDE SIDEBAR ---
 st.markdown(
     """
     <style>
@@ -15,11 +13,9 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- GLOBAL STYLE + NAV HEADER ---
 use_global_style()
 header(active="Tools")
 
-# --- CONTENT ---
 st.markdown("## Tools")
 
 st.markdown(
@@ -46,6 +42,3 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
-# --- FOOTER ---
-footer()
