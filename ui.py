@@ -19,13 +19,13 @@ def use_global_style():
             border-bottom: 1px solid #ddd;
         }
 
-        /* Left: logo */
+        /* Left logo */
         .navbar-left img {
-            width: 60px;   /* made logo larger */
+            width: 70px;  /* bigger logo */
             height: auto;
         }
 
-        /* Center: nav links */
+        /* Center nav */
         .navbar-center a {
             margin: 0 1rem;
             text-decoration: none;
@@ -37,7 +37,7 @@ def use_global_style():
             color: #e63946;
         }
 
-        /* Right: buttons */
+        /* Right side */
         .navbar-right {
             display: flex;
             align-items: center;
@@ -92,22 +92,6 @@ def header(active="Home"):
                 <a href="/Subscription" target="_self" class="btn-login">Login</a>
                 <a href="/Subscription" target="_self" class="btn-primary">Try for Free</a>
             </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-def footer():
-    st.markdown(
-        """
-        <div class="footer">
-            <p>© 2025 TruLine Betting</p>
-            <p>
-                <a href="mailto:contact@trulinebetting.com">Contact</a> |
-                <a href="https://discord.com" target="_blank">Discord</a> |
-                <a href="https://youtube.com" target="_blank">YouTube</a> |
-                <a href="https://tiktok.com" target="_blank">TikTok</a>
-            </p>
         </div>
         """,
         unsafe_allow_html=True,
