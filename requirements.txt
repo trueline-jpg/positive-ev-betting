@@ -3,3 +3,6 @@ pandas
 numpy
 python-dotenv
 requests
+matplotlib
+altair
+plotly
